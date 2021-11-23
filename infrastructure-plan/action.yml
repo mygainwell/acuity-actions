@@ -1,0 +1,44 @@
+name: "Global VPC Integration"
+description: "Validate Plan"
+
+inputs:
+  infrastructure-path:
+    description: “Path to infrastructure changes”
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Run - Terraform Init"
+      run: terraform init -input=false
+      shell: bash
+      working-directory: ${{ inputs.infrastructure-path }}
+    - name: "Run - Terraform Validate"
+      run: terraform validate
+      shell: bash
+      working-directory: ${{ inputs.infrastructure-path }}
+    - name: "Run - Terraform Plan"
+      id: plan
+      run: terraform plan
+      shell: bash
+      working-directory: ${{ inputs.infrastructure-path }}
+    - name: "Run - Terraform Comment"
+      if: github.event.pull_request
+      uses: actions/github-script@0.9.0
+      env:
+        STDOUT: "```${{ steps.plan.outputs.stdout }}```"
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: process.env.STDOUT
+          })
+    - name: "Run - Terraform Security"
+      if: github.event.pull_request
+      uses: aquasecurity/tfsec-pr-commenter-action@main
+      with:
+        github_token: ${{ github.token }}
+    

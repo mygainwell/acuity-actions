@@ -1,0 +1,45 @@
+name: "Infrastructure Setup"
+description: "Credentials and Terraform"
+
+inputs:
+  aws-access-key-id:
+    description: >-
+      AWS Access Key ID. This input is required if running in the GitHub hosted environment.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: true
+  aws-secret-access-key:
+    description: >-
+      AWS Secret Access Key. This input is required if running in the GitHub hosted environment.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: true
+  role-to-assume:
+    description: >-
+      Use the provided credentials to assume an IAM role and configure the Actions
+      environment with the assumed role credentials rather than with the provided
+      credentials
+    required: true
+  ssh-key:
+    description: "SSH private key"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: us-east-1
+        role-to-assume: ${{ inputs.role-to-assume }}
+        role-duration-seconds: 1200
+        role-session-name: acuity-tenant-live-cicd
+    - name: "Setup - Terraform CLI"
+      uses: hashicorp/setup-terraform@v1.3.2
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh-key }}
+        known_hosts: github.com
