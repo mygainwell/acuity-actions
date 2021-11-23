@@ -6,7 +6,6 @@ inputs:
     description: “Name of the repository to cache the build image”
     required: true
   deliverable:
-    type: choice
     description: “Type of the image to cache”
     required: true
 
