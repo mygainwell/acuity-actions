@@ -24,3 +24,5 @@ jobs:
         with:
           repository: ${{ github.repository }}
           deliverable: runner
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-actor: ${{ github.actor }} 
