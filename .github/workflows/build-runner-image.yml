@@ -1,0 +1,25 @@
+name: Build Runner Integration Image
+
+on:
+  push:
+    paths:
+      - 'build-image/runner/**'
+      - '.github/workflows/build-runner-image.yml'
+
+jobs:
+  build-runner-image:
+    runs-on: ubuntu-latest
+    container: docker:20.10.9
+    services:
+      docker:
+        image: docker:20.10.9-dind
+    strategy:
+        fail-fast: true
+    steps:
+      - name: "Setup - Checkout"
+        uses: actions/checkout@v2.1.0
+      - name: "Build Runner"
+        uses: ./build-image/runner
+        with:
+          repository: ${{ github.repository }}
+          deliverable: runner
