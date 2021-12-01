@@ -20,7 +20,7 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build AWS"
-        uses: ./build-image/aws
+        uses: ./build-image
         with:
           repository: ${{ github.repository }}
           deliverable: aws

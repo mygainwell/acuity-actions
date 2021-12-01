@@ -19,7 +19,7 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build Python"
-        uses: ./build-image/python
+        uses: ./build-image
         with:
           repository: ${{ github.repository }}
           deliverable: python
