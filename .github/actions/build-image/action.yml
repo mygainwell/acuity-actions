@@ -9,7 +9,7 @@ inputs:
     description: “Type of the image to cache”
     required: true
   github-actor:
-    description" "Login  ghcr.io github.actor"
+    description: "Login  ghcr.io github.actor"
     required: true
   github-token:
     description" "Login ghcr.io secrets.GITHUB_TOKEN"
