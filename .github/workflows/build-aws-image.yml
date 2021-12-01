@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'build-image/aws/**'
+      - 'build-image/action.yml'
       - '.github/workflows/build-aws-image.yml'
 
 

@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'build-image/python/**'
+      - 'build-image/action.yml'
       - '.github/workflows/build-python-image.yml'
 
 jobs:
