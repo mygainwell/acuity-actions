@@ -26,11 +26,15 @@ runs:
           --cache-from $CACHE_IMAGE:cicd-${{ inputs.deliverable }} \
           --tag $CACHE_IMAGE:cicd-${{ inputs.deliverable }} \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
-          "${{ github.action_path }}/${{ inputs.deliverable }}/."
+          "."
+      shell: bash
+      working-directory: ${{ inputs.deliverable }}
       env:
         CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
         DOCKER_BUILDKIT: 1
     - name: Push
       run: docker push $CACHE_IMAGE:cicd-${{ inputs.deliverable }}
+      shell: bash
+      working-directory: ${{ inputs.deliverable }}
       env:
         CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
