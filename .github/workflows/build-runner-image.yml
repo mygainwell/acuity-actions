@@ -20,7 +20,7 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build Runner"
-        uses: mygainwell/actions/acuity-actions/build-image@v0
+        uses: ./.github/actions/build-image
         with:
           repository: ${{ github.repository }}
           deliverable: runner
