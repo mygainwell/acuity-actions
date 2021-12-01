@@ -3,24 +3,23 @@ name: Build Image
 
 inputs:
   repository:
-    description: “Name of the repository to cache the build image”
+    description: "Name of the repository to cache the build image"
     required: true
   deliverable:
-    description: “Type of the image to cache”
+    description: "Type of the image to cache"
     required: true
   github-actor:
-    description: "Login  ghcr.io github.actor"
+    description: "Login ghcr.io github.actor"
     required: true
   github-token:
     description: "Login ghcr.io secrets.GITHUB_TOKEN"
     required: true
 
-env:
-  CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
-  DOCKER_BUILDKIT: 1
-
 runs:
   using: "composite"
+  env:
+    CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
+    DOCKER_BUILDKIT: 1
   steps:
     - name: Login
       run: echo "${{ inputs.github-token }}" | docker login ghcr.io -u ${{ inputs.github-actor }} --password-stdin
