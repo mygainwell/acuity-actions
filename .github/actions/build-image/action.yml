@@ -21,7 +21,7 @@ runs:
     - name: Login
       run: echo "${{ inputs.github-token }}" | docker login ghcr.io -u ${{ inputs.github-actor }} --password-stdin
       shell: bash
-      working-directory: .github/actions/build-image/${{ inputs.deliverable }}
+      working-directory: ${{ github.action_path }}/${{ inputs.deliverable }}
     - name: Build
       run: |
         docker build \
@@ -30,13 +30,13 @@ runs:
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           "."
       shell: bash
-      working-directory: .github/actions/build-image/${{ inputs.deliverable }}
+      working-directory: ${{ github.action_path }}/${{ inputs.deliverable }}
       env:
         CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
         DOCKER_BUILDKIT: 1
     - name: Push
       run: docker push $CACHE_IMAGE:cicd-${{ inputs.deliverable }}
       shell: bash
-      working-directory: .github/actions/build-image/${{ inputs.deliverable }}
+      working-directory: ${{ github.action_path }}/${{ inputs.deliverable }}
       env:
         CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
