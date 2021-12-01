@@ -15,9 +15,6 @@ env:
 
 runs:
   using: "composite"
-  defaults:
-    run:
-      working-directory: ${{ github.action_path }}/${{ github.event.inputs.deliverable }}
   steps:
     - name: Login
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -27,6 +24,6 @@ runs:
           --cache-from ${{ github.event.inputs.repository }}:cicd-${{ github.event.inputs.deliverable }} \
           --tag ${{ github.event.inputs.repository }}:cicd-${{ github.event.inputs.deliverable }} \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
-          "."
+          "${{ github.action_path }}/${{ github.event.inputs.deliverable }}/."
     - name: Push
       run: docker push ${{ github.event.inputs.repository }}:cicd-${{ github.event.inputs.deliverable }}
