@@ -21,6 +21,7 @@ runs:
     - name: Login
       run: echo "${{ inputs.github-token }}" | docker login ghcr.io -u ${{ inputs.github-actor }} --password-stdin
       shell: bash
+      working-directory: ${{ inputs.deliverable }}
     - name: Build
       run: |
         docker build \
