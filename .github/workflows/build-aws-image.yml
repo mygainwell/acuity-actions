@@ -21,7 +21,7 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build AWS"
-        uses: mygainwell/build-image
+        uses: mygainwell/acuity-actions/build-image
         with:
           repository: ${{ github.repository }}
           deliverable: aws
