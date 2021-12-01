@@ -3,8 +3,8 @@ name: Build Runner Integration Image
 on:
   push:
     paths:
-      - 'build-image/runner/**'
-      - 'build-image/action.yml'
+      - '.github/actions/build-image/runner/**'
+      - '.github/actions/build-image/action.yml'
       - '.github/workflows/build-runner-image.yml'
 
 jobs:
