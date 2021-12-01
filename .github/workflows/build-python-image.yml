@@ -20,7 +20,7 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build Python"
-        uses: mygainwell/acuity-actions/build-image@v0
+        uses: ./build-image@v0
         with:
           repository: ${{ github.repository }}
           deliverable: python
