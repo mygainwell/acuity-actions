@@ -3,8 +3,8 @@ name: Build AWS Integration Image
 on:
   push:
     paths:
-      - 'build-image/aws/**'
-      - 'build-image/action.yml'
+      - '.github/actions/build-image/aws/**'
+      - '.github/actions/build-image/action.yml'
       - '.github/workflows/build-aws-image.yml'
 
 
@@ -21,7 +21,9 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build AWS"
-        uses: ../build-image@v0
+        uses: ./.github/actions/build-image
         with:
           repository: ${{ github.repository }}
           deliverable: aws
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-actor: ${{ github.actor }}

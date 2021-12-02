@@ -3,8 +3,8 @@ name: Build Python Integration Image
 on:
   push:
     paths:
-      - 'build-image/python/**'
-      - 'build-image/action.yml'
+      - '.github/actions/build-image/python/**'
+      - '.github/actions/build-image/action.yml'
       - '.github/workflows/build-python-image.yml'
 
 jobs:
@@ -20,7 +20,9 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
       - name: "Build Python"
-        uses: ../build-image@v0
+        uses: ./.github/actions/build-image
         with:
           repository: ${{ github.repository }}
           deliverable: python
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-actor: ${{ github.actor }}
