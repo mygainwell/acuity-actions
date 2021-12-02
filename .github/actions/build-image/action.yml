@@ -27,7 +27,7 @@ runs:
           --cache-from $CACHE_IMAGE:cicd-${{ inputs.deliverable }} \
           --tag $CACHE_IMAGE:cicd-${{ inputs.deliverable }} \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
-          ./${{ github.action_path }}/${{ inputs.deliverable }}
+          build-image/${{ inputs.deliverable }}/.
       shell: sh
       env:
         CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
