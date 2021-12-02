@@ -7,7 +7,6 @@ on:
       - '.github/actions/build-image/action.yml'
       - '.github/workflows/build-aws-image.yml'
 
-
 jobs:
   build-aws-image:
     runs-on: ubuntu-latest

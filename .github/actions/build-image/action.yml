@@ -1,6 +1,5 @@
 name: Build Image
 
-
 inputs:
   repository:
     description: "Name of the repository to cache the build image"
