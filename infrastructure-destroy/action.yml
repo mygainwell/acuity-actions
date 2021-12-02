@@ -1,0 +1,58 @@
+name: Terraform Destroy
+
+on: 
+  workflow_dispatch:
+    description: 'Inputs build the path to destroy.'
+    inputs:
+      stack:
+        description: 'The name of the stack to destroy.'     
+        required: true
+      environment:
+        description: 'The environment to destroy.'
+        required: true
+        default: 'development'  
+
+jobs:
+  terraform-destroy:
+    defaults:
+      run:
+        working-directory: ./infrastructure/${{ github.event.inputs.stack }}/${{ github.event.inputs.environment }}/
+    name: Destroy ${{ github.event.inputs.stack }} ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code
+      # Marketplace: https://github.com/marketplace/actions/checkout
+      - name: "Setup - Checkout"
+        uses: actions/checkout@v2.1.0
+
+      # Provides AWS credentials to Terraform
+      # By default, Terraform checks the home directory for a .aws folder with a credential file
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: acuity-tenant-live-cicd
+
+      # Downloads a specific version of Terraform CLI and adds it to PATH
+      # Marketplace: https://github.com/marketplace/actions/hashicorp-setup-terraform
+      - name: "Setup - Terraform CLI"
+        uses: hashicorp/setup-terraform@v1.3.2
+      
+      # Install the SSH Key associated with an account that has Gruntwork.io private repo access.
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          known_hosts: github.com
+      
+      # Init pulls credentials from the .aws/credentials file by default
+      - name: "Run - Terraform Init"
+        run: terraform init -input=false
+
+      # Auto-approve prevents the requirement of human interaction
+      - name: "Run - Terraform Destroy"
+        run: terraform destroy -input=false -auto-approve

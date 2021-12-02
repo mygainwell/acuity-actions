@@ -1,0 +1,38 @@
+name: Build Image
+
+inputs:
+  repository:
+    description: "Name of the repository to cache the build image"
+    required: true
+  deliverable:
+    description: "Type of the image to cache"
+    required: true
+  github-actor:
+    description: "Login ghcr.io github.actor"
+    required: true
+  github-token:
+    description: "Login ghcr.io secrets.GITHUB_TOKEN"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Login
+      run: echo "${{ inputs.github-token }}" | docker login ghcr.io -u ${{ inputs.github-actor }} --password-stdin
+      shell: sh
+    - name: Build
+      run: |
+        docker build \
+          --cache-from $CACHE_IMAGE:cicd-${{ inputs.deliverable }} \
+          --tag $CACHE_IMAGE:cicd-${{ inputs.deliverable }} \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          build-image/${{ inputs.deliverable }}/.
+      shell: sh
+      env:
+        CACHE_IMAGE: ghcr.io/${{ inputs.repository }}
+        DOCKER_BUILDKIT: 1
+    - name: Push
+      run: docker push $CACHE_IMAGE:cicd-${{ inputs.deliverable }}
+      shell: sh
+      env:
+        CACHE_IMAGE: ghcr.io/${{ inputs.repository }}

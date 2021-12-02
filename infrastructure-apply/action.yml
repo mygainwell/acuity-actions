@@ -1,0 +1,16 @@
+name: "Global VPC Integration"
+description: "Validate Plan"
+
+runs:
+  using: "composite"
+  steps:
+    - run: cd ${{ github.action_path }}
+    - name: "Run - Terraform Init"
+      run: terraform init -input=false
+    - name: "Run - Terraform Validate"
+      run: terraform validate
+    - name: "Run - Terraform Plan"
+      run: terraform plan
+    - name: "Run - Terraform Apply"
+      run: terraform apply -input=false -auto-approve
+    
