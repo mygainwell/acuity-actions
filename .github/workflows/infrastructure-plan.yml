@@ -23,6 +23,8 @@ jobs:
           node-version: '14'
       - name: "Setup - Terraform CLI"
         uses: hashicorp/setup-terraform@v1.3.2
+      - name: "Setup terraform compliance"
+        uses: terraform-compliance/github_action@main
       - name: "Infrastructure Plan"
         uses: ./.github/actions/infrastructure-plan
         with:
