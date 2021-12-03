@@ -13,9 +13,11 @@ runs:
       run: | 
         echo ${{ inputs.infrastructure-path }}
         echo ${{ github.action_path }}
+        echo ./${{ github.action_path }}
+        echo ../${{ github.action_path }}
         terraform init -input=false
       shell: sh
-      working-directory: ${{ inputs.infrastructure-path }}
+      working-directory: ./${{ inputs.infrastructure-path }}
     - name: "Run - Terraform Validate"
       run: terraform validate
       shell: sh
@@ -44,4 +46,3 @@ runs:
       uses: aquasecurity/tfsec-pr-commenter-action@main
       with:
         github_token: ${{ github.token }}
-    
