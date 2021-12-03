@@ -12,7 +12,7 @@ on:
 
 jobs:
   plan:
-    runs-on: [self-hosted]
+    runs-on: ubuntu-latest
     strategy:
         fail-fast: false
     steps:
