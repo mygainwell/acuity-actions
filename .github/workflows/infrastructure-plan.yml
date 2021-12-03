@@ -1,0 +1,25 @@
+name: Gainwell Mock Data
+
+on:
+  push:
+    paths:
+      - 'infrastructure-plan/**'
+      - 'stacks/data/**'
+      - '.github/actions/**'
+      - '.github/workflows/mock-data-dev.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  mock-data-dev:
+    runs-on: [self-hosted]
+    strategy:
+        fail-fast: false
+    steps:
+      - name: "Setup - Checkout"
+        uses: actions/checkout@v2.1.0
+      - name: "Infrastructure Plan"
+        uses: ./.github/actions/infrastructure-plan
+        with:
+          infrastructure-path: infrastructure-plan
