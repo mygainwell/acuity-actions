@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  runner:
+    image: ghcr.io/mygainwell/acuity-actions:cicd-runner
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - ORGANIZATION_ACCESS_TOKEN=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
+      - ORGANIZATION=mygainwell
