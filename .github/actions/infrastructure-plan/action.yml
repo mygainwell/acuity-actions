@@ -15,10 +15,9 @@ runs:
         echo ${{ github.action_path }}
         echo ./${{ github.action_path }}
         echo ../${{ github.action_path }}
-        chmod +x /usr/bin/env
         terraform init -input=false
       shell: sh
-      working-directory: ./${{ inputs.infrastructure-path }}
+      working-directory: ${{ inputs.infrastructure-path }}
     - name: "Run - Terraform Validate"
       run: terraform validate
       shell: sh

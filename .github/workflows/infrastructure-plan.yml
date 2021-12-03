@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: "Setup - Terraform CLI"
         uses: hashicorp/setup-terraform@v1.3.2
       - name: "Infrastructure Plan"
