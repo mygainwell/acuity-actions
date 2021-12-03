@@ -5,7 +5,7 @@ on:
     paths:
       - 'infrastructure-plan/**'
       - '.github/actions/infrastructure-plan/**'
-      - '.github/workflows/infrastructure-plan/**'
+      - '.github/workflows/infrastructure-plan.yml'
   pull_request:
     branches:
       - main
