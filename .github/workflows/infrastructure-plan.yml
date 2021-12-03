@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
+      - name: "Setup - Terraform CLI"
+        uses: hashicorp/setup-terraform@v1.3.2
       - name: "Infrastructure Plan"
         uses: ./.github/actions/infrastructure-plan
         with:
