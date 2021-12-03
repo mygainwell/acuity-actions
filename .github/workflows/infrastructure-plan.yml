@@ -4,9 +4,7 @@ on:
   push:
     paths:
       - 'infrastructure-plan/**'
-      - 'stacks/data/**'
-      - '.github/actions/**'
-      - '.github/workflows/mock-data-dev.yml'
+      - '.github/actions/infrastructure-plan/**'
   pull_request:
     branches:
       - main
