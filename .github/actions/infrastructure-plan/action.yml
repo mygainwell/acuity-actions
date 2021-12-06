@@ -23,7 +23,7 @@ runs:
       shell: sh
       working-directory: ${{ inputs.infrastructure-path }}
     - name: "Run - Terraform Compliance"
-      run: terraform-compliance -p plan.out.json -f aws
+      run: terraform-compliance -p plan.out.json -f features
       shell: sh
       working-directory: ${{ inputs.infrastructure-path }}
     - name: "Run - Terraform Security"
