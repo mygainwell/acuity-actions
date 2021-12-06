@@ -43,3 +43,5 @@ runs:
       with:
         key: ${{ inputs.ssh-key }}
         known_hosts: github.com
+    - name: "Setup - Terraform compliance"
+      uses: terraform-compliance/github_action@main
