@@ -11,8 +11,8 @@ on:
       - main
 
 jobs:
-  plan:
-    runs-on: [self-hosted, linux]
+  infrastructure-plan:
+    runs-on: ubuntu-latest
     strategy:
         fail-fast: false
     steps:
