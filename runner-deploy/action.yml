@@ -1,0 +1,58 @@
+name: Runner Deploy
+description: "Use Workflow Dispatch to manually trigger this composite action"
+
+inputs:
+  horizontal:
+    description: 'Number of machines with runners.'
+    required: true
+  aws-access-key-id:
+    description: >-
+      AWS Access Key ID. This input is required if running in the GitHub hosted environment.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: true
+  aws-secret-access-key:
+    description: >-
+      AWS Secret Access Key. This input is required if running in the GitHub hosted environment.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: true
+  role-to-assume:
+    description: >-
+      Use the provided credentials to assume an IAM role and configure the Actions
+      environment with the assumed role credentials rather than with the provided
+      credentials
+    required: true
+  github-actor:
+    description: "Login ghcr.io github.actor"
+    required: true
+  github-token:
+    description: "Login ghcr.io secrets.GITHUB_TOKEN"
+    required: true
+  organization:
+    description: >-
+      Name of the organization where businesses and open-source projects can collaborate across many projects at once.
+    required: true
+  organization-access-token:
+    description: >-
+     Registration token for an organization
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ inputs.aws-access-key-id }}
+      aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+      aws-region: us-east-1
+      role-to-assume: ${{ inputs.role-to-assume }}
+      role-duration-seconds: 1200
+      role-session-name: acuity-actions-runner-deploy
+  - name: Login Github Container Registry
+    run: echo "${{ inputs.github-token }}" | docker login ghcr.io -u ${{ inputs.github-actor }} --password-stdin
+    shell: sh
+  - name: Initialize Swarm
+    run: ${{ github.action_path }}/start.sh ${{ inputs.horizontal }}
+    shell: bash

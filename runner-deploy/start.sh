@@ -1,7 +1,7 @@
 #!/bin/bash
 
 i=1;
-while [ $i -le 3 ] 
+while [ $i -le $1 ] 
 do
     docker-machine create \
         --driver amazonec2 \
@@ -18,7 +18,7 @@ ip=$(docker-machine ip runner-node-1);
 token=$(docker-machine ssh runner-node-1 -- sudo docker swarm join-token -q worker);
 
 i=2;
-while [ $i -le 3 ]
+while [ $i -le $1 ]
 do
     docker-machine ssh runner-node-$i -- sudo docker swarm join --token $token $ip:2377;
     i=$((i + 1));
