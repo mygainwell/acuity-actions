@@ -35,7 +35,7 @@ runs:
         aws-region: us-east-1
         role-to-assume: ${{ inputs.role-to-assume }}
         role-duration-seconds: 1200
-        role-session-name: acuity-tenant-live-cicd
+        role-session-name: acuity-actions-cicd
     - name: "Setup - Terraform CLI"
       uses: hashicorp/setup-terraform@v1.3.2
     - name: Install SSH Key
@@ -43,3 +43,5 @@ runs:
       with:
         key: ${{ inputs.ssh-key }}
         known_hosts: github.com
+    - name: "Setup - Terraform compliance"
+      uses: terraform-compliance/github_action@main
