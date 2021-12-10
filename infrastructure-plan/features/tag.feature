@@ -13,4 +13,4 @@ Feature: Tag Naming Standards AWS
         | acuity:application   | .+                             |
         | acuity:owner         | .+                             |
         | acuity:environment   | ^(ephem\|prd\|mgmt\|dev\|stg)$ |
-        | acuity:compliance    | ^(FedRAMP\|None)$              | 
+        | acuity:compliance    | ^(FedRAMP\|None)$              |
