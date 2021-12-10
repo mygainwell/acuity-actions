@@ -45,8 +45,6 @@ outputs:
     description: 'Whether or not the Terragrunt plan contained changes.'
   tf_plan_output:
     description: 'The Terragrunt plan output.'
-  tf_workspace:
-    description: 'Terraform cloud workspace name'
 runs:
   using: 'docker'
   image: './Dockerfile'
