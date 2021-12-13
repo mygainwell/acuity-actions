@@ -1,0 +1,3 @@
+[submodule "terragrunt-actions"]
+	path = terragrunt-actions
+	url = https://github.com/the-commons-project/terragrunt-github-actions
