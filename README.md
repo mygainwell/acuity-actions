@@ -35,3 +35,8 @@ Run your GitHub Actions locally
 ```bash
 act
 ```
+
+Test shell scripts with BATS
+```
+./test/bats/bin/bats test
+```
