@@ -12,6 +12,6 @@ Feature: Directory Service Standards AWS
 
     Scenario: Directory Service Subnets
         Given I have aws_directory_service_directory defined
-        When it contains vpc_settings
+        When it has vpc_settings
         Then it must contain subnet_ids
         And its value must not be null
