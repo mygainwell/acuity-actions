@@ -14,7 +14,7 @@ Feature: Security Group Standards AWS
         Then it must have ingress
         Then it must not have <proto> protocol and port <portNumber> for 0.0.0.0/0
 
-    Examples:
+        Examples:
         | ProtocolName | proto | portNumber |
         | HTTP         | tcp   | 443        |
         | Telnet       | tcp   | 23         |
