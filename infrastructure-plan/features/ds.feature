@@ -1,10 +1,10 @@
 Feature: Directory Service Standards AWS
 
-    Scenario: 
+    Scenario: Directory Service Properties
         Given I have aws_directory_service_directory
         Then it must contain edition
         And its value must be "Enterprise"
-        Then is must contain type
+        Then its must contain type
         And its value must be "MicrosoftAD"
 
     Scenario Outline: Directory Service Subnets
