@@ -3,10 +3,10 @@ Feature: Directory Service Standards AWS
     Scenario Outline: Directory Service Properties
         Given I have aws_directory_service_directory defined
         Then it must have <property>
-        And it must be <value>
+        And its value must be <pattern>
 
         Examples:
-        | property | value       |
+        | property | pattern     |
         | edition  | Enterprise  |
         | type     | MicrosoftAD |
 
