@@ -1,13 +1,16 @@
 Feature: Directory Service Standards AWS
 
-    Scenario: Directory Service Properties
+    Scenario Outline: Directory Service Properties
         Given I have aws_directory_service_directory defined
-        Then it must contain edition
-        And its value must be "Enterprise"
-        Then it must contain type
-        And its value must be "MicrosoftAD"
+        Then it must have <property>
+        Then it must be <value>
 
-    Scenario Outline: Directory Service Subnets
+        Examples:
+        | property | value       |
+        | edition  | Enterprise  |
+        | type     | MicrosoftAD |
+
+    Scenario: Directory Service Subnets
         Given I have aws_directory_service_directory defined
         When it contains vpc_settings
         Then it must contain subnet_ids
