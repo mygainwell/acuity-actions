@@ -32,7 +32,8 @@ RUN apk --no-cache add \
 RUN ["/bin/sh", "-c", "apk add --update --no-cache bash ca-certificates curl git jq openssh"]
 
 COPY --from=golang:1.13-alpine /usr/local/go/ /usr/local/go/
-
 COPY ["main.sh", "/src/main.sh"]
+
+RUN chmod 0755 /src/main.sh
 
 ENTRYPOINT ["/src/main.sh"]

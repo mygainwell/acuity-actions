@@ -13,7 +13,7 @@ function parse_inputs {
   fi
 
   if [ $"{INPUT_IAM_CREDS_ID}" != "" ]; then
-    iam_creds_id=${INPUT_IMA_CREDS_ID}
+    iam_creds_id=${INPUT_IAM_CREDS_ID}
   else
     echo "ERROR: IAM CREDENTIALS id stored in secrets manager is required"
     exit 1
