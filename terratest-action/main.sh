@@ -35,6 +35,7 @@ function createSSHKeyfile {
   # and write to file under $HOME/.ssh/id_rsa 
   # Also read github.com public key and place it in $HOME/.ssh/known_hosts
   # file. 
+  mkdir -p /root/.ssh
   ssh_private_key=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${ssh_private_key_id} --query SecretString --output text)
   cat > /root/.ssh/id_rsa <<-EOF
 ${ssh_private_key}
