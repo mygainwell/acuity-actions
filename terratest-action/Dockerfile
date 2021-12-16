@@ -34,6 +34,8 @@ RUN ["/bin/sh", "-c", "apk add --update --no-cache bash ca-certificates curl git
 COPY --from=golang:1.13-alpine /usr/local/go/ /usr/local/go/
 COPY ["main.sh", "/src/main.sh"]
 
+ENV PATH="/usr/local/go/bin:${PATH}"
+
 RUN chmod 0755 /src/main.sh
 
 ENTRYPOINT ["/src/main.sh"]
