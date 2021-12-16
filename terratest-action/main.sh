@@ -19,6 +19,13 @@ function parse_inputs {
     exit 1
   fi
 
+  if [ "${INPUT_AWS_ACCOUNT_IDS}" != "" ]; then 
+    aws_account_ids=${INPUT_AWS_ACCOUNT_IDS}
+  else
+    echo "ERROR: AWS Account Id is needed"
+    exit 1
+  fi
+
   if [ "${INPUT_AWS_REGION}" != "" ]; then
     aws_region=${INPUT_AWS_REGION}
   fi
@@ -52,7 +59,7 @@ function awsProfile {
   aws_access_key_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.AWS_ACCESS_KEY_ID')
   aws_secret_access_key=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.AWS_SECRET_ACCESS_KEY')
   aws_iam_role=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.AWS_IAM_ROLE_NAME')
-  aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.EPHMERICAL')
+  aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.EPHMERICAL')
   echo "[default]
   aws_access_key_id = $aws_access_key_id
   aws_secret_access_key = $aws_secret_access_key

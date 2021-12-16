@@ -8,6 +8,9 @@ inputs:
   iam_creds_id:
     description: IAM Credentials Secrets Managers
     required: true
+  aws_account_ids:
+    description: AWS Account ID from Secrets Manager
+    required: true
   aws_region:
     description: AWS Region to deploy resources
     required: true
