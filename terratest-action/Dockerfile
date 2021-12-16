@@ -1,4 +1,4 @@
-form ubuntu:latest
+FROM ubuntu:latest
 
 ARG TF_VERSION=1.0.11
 
