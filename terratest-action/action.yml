@@ -1,0 +1,27 @@
+name: Terratest Action
+description: An Action to run a terratest
+
+inputs:
+  ssh_key_secret_id:
+    description: SSH Private key to download gruntworks repos
+    required: true
+  iam_credentials_id:
+    description: IAM Credentials Secrets Managers
+    required: true
+  aws_accounts_id:
+    description: AWS Account details from secrets manager
+    required: true
+
+runs:
+  using: "composite"
+  setps:
+    - name: Add Private SSH Key
+      run: |
+        ssh_private_key=$(aws --region us-east-1 secretsmanager get-secret-value --secret-id ${{ inputs.ssh_key_secret_id }} --query SecretString --output text)
+        cat > /root/.ssh/id_rsa <<-EOF
+        ${ssh_private_key}
+        EOF
+        chmod 0600 /root/.ssh/id_rsa
+        ssh-keyscan github.com >> /root/.ssh/known_hosts
+      shell: bash
+    
