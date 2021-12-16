@@ -1,0 +1,22 @@
+name: Terratest Action
+description: An Action to run a terratest
+
+inputs:
+  ssh_private_key_id:
+    description: SSH Private key to download gruntworks repos
+    required: true
+  iam_creds_id:
+    description: IAM Credentials Secrets Managers
+    required: true
+  aws_region:
+    description: AWS Region to deploy resources
+    required: true
+    default: us-east-1
+  terratest_args:
+    description: Terratest Arguments
+    required: true
+    default: ""
+
+runs:
+  using: 'docker'
+  image: './Dockerfile'
