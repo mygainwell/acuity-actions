@@ -1,4 +1,4 @@
-s#!/bin/bash
+#!/bin/bash
 
 function terragruntApply {
     # Gather the output of `terragrunt apply`.

@@ -169,7 +169,7 @@ function main {
     configureSSHKey
     configureIAM
     installTerragrunt
-    ls -l ${GITHUB_WORKSPACE}
+
     cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
     
     case "${tfSubcommand}" in
