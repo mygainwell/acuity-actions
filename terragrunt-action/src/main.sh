@@ -61,58 +61,13 @@ function parseInputs {
     if [[ -n "${INPUT_TG_BINARY}" ]]; then
         tfBinary=${INPUT_TG_BINARY}
     fi
-    
-    tfCLICredentialsHostname=""
-    if [ "${INPUT_TF_CLI_CREDENTIALS_HOSTNAME}" != "" ]; then
-        tfCLICredentialsHostname=${INPUT_TF_CLI_CREDENTIALS_HOSTNAME}
-    fi
-    
-    tfCLICredentialsToken=""
-    if [ "${INPUT_TF_CLI_CREDENTIALS_TOKEN}" != "" ]; then
-        tfCLICredentialsToken=${INPUT_TF_CLI_CREDENTIALS_TOKEN}
-    fi
-    
-    tfWorkspace="default"
-    if [ -n "${TF_WORKSPACE}" ]; then
-        tfWorkspace="${TF_WORKSPACE}"
-    fi
 }
-
-#function configureCLICredentials {
-#    if [[ ! -f "${HOME}/.terraformrc" ]] && [[ "${tfCLICredentialsToken}" != "" ]]; then
-#    cat > ${HOME}/.terraformrc << EOF
-#credentials "${tfCLICredentialsHostname}" {
-#  token = "${tfCLICredentialsToken}"
-#}
-#EOF
-#    fi
-#}
-
-function configureCLICredentials {
-    if [[ ! -f "${HOME}/.terraformrc" ]] && [[ "${tfCLICredentialsToken}" != "" ]]; then
-        token=$(aws --region us-east-1 secretsmanager get-secret-value --secret-id ${tfCLICredentialsToken} --query SecretString --output text)
-        cat > ${HOME}/.terraformrc << EOF
-credentials "${tfCLICredentialsHostname}" {
-    token = "${token}"
-}
-EOF
-    fi
-}
-
-#function configureSSHKeys {
-#    mkdir -p /root/.ssh
-#    if [[ ! -f "/root/.ssh/id_rsa" ]] && [[ "${tfSSHPrivateKey}" != "" ]]; then
-#        echo "Adding SSH Private key"
-#        cat > /root/.ssh/id_rsa <<-EOF
-#${tfSSHPrivateKey}
-#EOF
-#        chmod 600 /root/.ssh/id_rsa
-#        ssh-keyscan github.com >> /root/.ssh/known_hosts
-#
-#    fi
-#}
 
 function configureSSHKey {
+    # This function should SSH Private key stored in AWS Secrets Manager
+    # in US-EAST-1 and store the file under the location /root/.ssh
+    # Also get the public key of github.com and place it in 
+    # /root/.ssh/known_hosts file. 
     echo "Adding SSH Key"
     mkdir -p /root/.ssh
     if [[ ! -f "/root/.ssh/id_rsa" ]] && [[ "${tfSSHPrivateKey}" != "" ]]; then
@@ -127,6 +82,9 @@ EOF
 }
 
 function configureIAM {
+    # This function should get the IAM credentials stored in secrets Manager
+    # in US-EAST-1 and export them as AWS Environment variables. 
+    # AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
     aws --region us-east-1 secretsmanager get-secret-value --secret-id ${iamCredentials} --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' > /tmp/secrets.env
     eval $(cat /tmp/secrets.env | sed 's/^/export /')
     rm -f /tmp/secrets.env
@@ -207,68 +165,50 @@ function main {
     source ${scriptDir}/terragrunt_destroy.sh
     
     parseInputs
-    configureCLICredentials
     installTerraform
+    configureSSHKey
+    configureIAM
+    installTerragrunt
     cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
     
     case "${tfSubcommand}" in
         init)
             echo "::group::init"
-            installTerragrunt
-            configureSSHKey
-            configureIAM
             terragruntInit ${*}
             echo "::endgroup::"
         ;;
         validate)
             echo "::group::validate"
-            installTerragrunt
-            configureSSHKey
             terragruntValidate ${*}
             echo "::endgroup::"
         ;;
         plan)
             echo "::group::plan"
-            installTerragrunt
-            configureSSHKey
-            configureIAM
             terragruntPlan ${*}
             echo "::endgroup::"
         ;;
         apply)
             echo "::group::apply"
-            installTerragrunt
-            configureSSHKey
-            configureIAM
             terragruntApply ${*}
             echo "::endgroup::"
         ;;
         output)
             echo "::group::output"
-            installTerragrunt
             terragruntOutput ${*}
             echo "::endgroup::"
         ;;
         import)
             echo "::group::import"
-            installTerragrunt
-            configureIAM
             terragruntImport ${*}
             echo "::endgroup::"
         ;;
         taint)
             echo "::group::taint"
-            installTerragrunt
-            configureSSHKey
-            configureIAM
             terragruntTaint ${*}
             echo "::endgroup::"
         ;;
         destroy)
             echo "::group::destroy"
-            installTerragrunt
-            configureSSHKey
-            configureIAM
             terragruntDestroy ${*}
             echo "::endgroup::"
         ;;
