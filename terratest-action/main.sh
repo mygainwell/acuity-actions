@@ -80,7 +80,7 @@ function main {
   export AWS_PROFILE=github
 
   cd $workingDir
-  go test -v ${terratestArgs}
+  go test ${terratestArgs}
 }
 
 
