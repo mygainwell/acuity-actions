@@ -30,6 +30,12 @@ function parse_inputs {
     aws_region=${INPUT_AWS_REGION}
   fi
 
+  if [ "${INPUT_WORKING_DIR}" != "" ]; then
+    workingDir=${INPUT_WORKING_DIR}
+  else
+    workingDir=test
+  fi
+
   # Optional
 
   terratestArgs=${INPUT_TERRATEST_ARGS}
@@ -69,8 +75,6 @@ function awsProfile {
   role_arn = arn:aws:iam::$aws_account_id:role/$aws_iam_role
   source_profile = default" > ~/.aws/credentials 
 }
-
-workingDir=test
 
 function main {
   parse_inputs

@@ -19,6 +19,10 @@ inputs:
     description: Terratest Arguments
     required: true
     default: ""
+  working_dir:
+    description: Terratest Working directory
+    required: true
+    default: test
 
 runs:
   using: 'docker'
