@@ -14,3 +14,13 @@ Feature: Tag Naming Standards AWS
         | acuity:owner         | .+                             |
         | acuity:environment   | ^(ephem\|prd\|mgmt\|dev\|stg)$ |
         | acuity:compliance    | ^(FedRAMP\|None)$              | 
+
+    Scenario Outline: Ensure that specific tags are defined
+        Given I have *persistent EC2* resource that supports tags defined
+        When it has tags
+        Then it must contain tags
+        Then it must contain "<tags>"
+        And its value must match the "<value>" regex
+        Examples:
+        | tags                      | value                          |
+        | acuity:qualysAgentInstall | TRUE                           | 
