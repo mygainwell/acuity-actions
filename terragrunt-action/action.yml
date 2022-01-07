@@ -1,0 +1,50 @@
+name: 'Terragrunt GitHub Actions'
+description: 'Runs Terragrunt commands via GitHub Actions.'
+author: 'HashiCorp, Inc. Terraform Team <terraform@hashicorp.com>'
+branding:
+  icon: 'cloud'
+  color: 'purple'
+inputs:
+  ssh_private_key:
+    description: 'Private SSH key stored in AWS Secrets Manager'
+    required: true
+  iam_creds_secret:
+    description: 'IAM Credentials stored in AWS Secrets Maanger'
+    required: true
+  tf_version:
+    description: 'Terraform version to install.'
+    required: true
+    default: 'latest'
+  tg_version:
+    description: 'Terragrunt version to install.'
+    required: true
+    default: 'latest'
+  tg_binary:
+    description: 'Binary to use. Terraform or Terragrunt'
+    required: true
+    default: 'terragrunt'
+  tg_subcommand:
+    description: 'Terraform or Terragrunt subcommand to execute.'
+    required: true
+  tf_cli_credentials_hostname:
+    description: 'Hostname for the CLI credentials file.'
+    required: false
+    default: 'app.terraform.io'
+  tf_cli_credentials_token:
+    description: 'Token for the CLI credentials file stored in AWS Secrets Manager.'
+    required: false
+    default: ''
+  tg_working_dir:
+    description: 'Terragrunt working directory.'
+    required: false
+    default: '.'
+outputs:
+  tf_output:
+    description: 'The Terragrunt outputs in JSON format.'
+  tf_plan_has_changes:
+    description: 'Whether or not the Terragrunt plan contained changes.'
+  tf_plan_output:
+    description: 'The Terragrunt plan output.'
+runs:
+  using: 'docker'
+  image: './Dockerfile'
