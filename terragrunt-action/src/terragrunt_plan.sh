@@ -32,7 +32,7 @@ function terragruntPlan {
         planOutput=$(echo "${planOutput}" | sed -r -e 's/^  \+/\+/g' | sed -r -e 's/^  ~/~/g' | sed -r -e 's/^  -/-/g')
         
         # If output is longer than max length (65536 characters), keep last part
-        planOutput=$(echo "${planOutput}" | tail -c 65000 )
+        planOutput=$(echo "${planOutput}" | head -c 65000 )
     fi
     
     # Exit code of !0 indicates failure.
