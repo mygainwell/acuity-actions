@@ -4,7 +4,7 @@ function terragruntApplyRunAll {
     echo $(ls)
     # Gather the output of `terragrunt apply`.
     echo "apply: info: applying Terragrunt configuration in ${tfWorkingDir}"
-    applyOutput=$(${tfBinary} apply -auto-approve -input=false ${*} 2>&1)
+    applyOutput=$(${tfBinary} run-all apply -auto-approve -input=false ${*} 2>&1)
     applyExitCode=${?}
     applyCommentStatus="Failed"
     
