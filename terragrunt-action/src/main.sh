@@ -159,6 +159,7 @@ function main {
     source ${scriptDir}/terragrunt_validate.sh
     source ${scriptDir}/terragrunt_plan.sh
     source ${scriptDir}/terragrunt_apply.sh
+    source ${scriptDir}/terragrunt_apply_run_all.sh
     source ${scriptDir}/terragrunt_output.sh
     source ${scriptDir}/terragrunt_import.sh
     source ${scriptDir}/terragrunt_taint.sh
@@ -171,7 +172,7 @@ function main {
     installTerragrunt
 
     cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
-    
+    echo "${tfSubcommand}"
     case "${tfSubcommand}" in
         init)
             echo "::group::init"
@@ -193,6 +194,11 @@ function main {
             terragruntApply ${*}
             echo "::endgroup::"
         ;;
+        apply-all)
+            echo "::group::apply-all"
+            terragruntApplyRunAll ${*}
+            echo "::endgroup::"
+        ;;        
         output)
             echo "::group::output"
             terragruntOutput ${*}
