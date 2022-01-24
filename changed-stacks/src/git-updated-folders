@@ -1,0 +1,236 @@
+#!/bin/bash
+#
+# This script can be used to detect all the folders that have been updated between two git refs (branch, tag, sha, etc).
+# This can be used in a CI pipeline to find the terraform and terragrunt modules that have changes, and only run `plan`
+# or `apply` on the modules that has been affected.
+#
+# Specifically, this script will search all the changed files between two refs and return the list of folders that
+# contain those files that were changed. You can filter the files using the `--ext` argument. For convenience, this
+# script also exposes the shorthands `--terraform` and `--terragrunt` which uses the following heuristics:
+#
+# For terraform, any folder containing .tf or .tfvars files that changed will be returned.
+# For terragrunt, any folder containing terragrunt.hcl files that changed will be returned.
+#
+# Under the hood this uses git-updated-files to get the list of updated files.
+
+
+set -e
+
+readonly DEFAULT_TARGET_REF="HEAD"
+
+# Locate the directory in which this script is located. This is used for calling git-updated-files. This makes it easier
+# to test the script without installing it.
+readonly script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+function print_usage {
+  log_to_stderr
+  log_to_stderr  "Usage: git-updated-folders [OPTIONS]"
+  log_to_stderr
+  log_to_stderr "This script can be used to detect all the folders that have been updated between two git refs (branch, tag, sha, etc)."
+  log_to_stderr "This can be used in a CI pipeline to find the terraform and terragrunt modules that have changes, and only run 'plan'"
+  log_to_stderr "or 'apply' on the modules that has been affected."
+  log_to_stderr
+  log_to_stderr "Specifically, this script will search all the changed files between two refs and return the list of folders that"
+  log_to_stderr "contain those files that were changed. You can filter the files using the '--ext' argument. For convenience, this"
+  log_to_stderr "script also exposes the shorthands '--terraform' and '--terragrunt' which uses the following heuristics:"
+  log_to_stderr
+  log_to_stderr "For terraform, any folder containing .tf or .tfvars files that changed will be returned."
+  log_to_stderr "For terragrunt, any folder containing terragrunt.hcl files that changed will be returned."
+  log_to_stderr
+  log_to_stderr "Under the hood this uses git-updated-files to get the list of updated files."
+  log_to_stderr
+  log_to_stderr "Options:"
+  log_to_stderr
+  log_to_stderr -e "  --source-ref\t\tThe git ref (branch, tag, or SHA1) that is the source of the diff (what you are comparing from). Required."
+  log_to_stderr -e "  --target-ref\t\tThe git ref (branch, tag, or SHA1) that is the target of the diff (what you are comparing to). Defaults to the current SHA (HEAD) of the repo. Optional."
+  log_to_stderr -e "  --repo-root\t\tThe root path of the git repository. This can be automatically detected if the current working directory is a git repository. Required if current directory is not a git repository."
+  log_to_stderr -e "  --ext\t\tThe file extensions to search for. You can pass in multiple. Optional."
+  log_to_stderr -e "  --terragrunt\t\tConvenience flag to automatically select extensions that match terragrunt modules.  Equivalent to '--ext terragrunt.hcl'. Optional."
+  log_to_stderr -e "  --terraform\t\tConvenience flag to automatically select extensions that match terraform modules. Equivalent to '--ext .tf --ext .tfvars'. Optional."
+  log_to_stderr -e "  --exclude-deleted\tIf passed in, filter out deleted folders from the final list."
+  log_to_stderr -e "  --include-deleted-only\tIf passed in, only show deleted folders in the final list."
+  log_to_stderr -e "  --help\t\tPrint this help text and exit."
+  log_to_stderr
+  log_to_stderr "Example:"
+  log_to_stderr
+  log_to_stderr "  git-updated-folders --source-ref master --target-ref development --terragrunt --ext .yaml --ext .yml"
+  log_to_stderr
+}
+
+function log_to_stderr {
+  >&2 echo "$@"
+}
+
+function assert_not_empty {
+  local -r arg_name="$1"
+  local -r arg_value="$2"
+
+  if [[ -z "$arg_value" ]]; then
+    >&2 echo "ERROR: The value for '$arg_name' cannot be empty"
+    print_usage
+    exit 1
+  fi
+}
+
+# Returns 0 if the given item (needle) is in the given array (haystack); returns 1 otherwise.
+function array_contains {
+  local -r needle="$1"
+  shift
+  local -ra haystack=("$@")
+
+  local item
+  for item in "${haystack[@]}"; do
+    if [[ "$item" == "$needle" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+function fatal_not_a_git_repository {
+  log_to_stderr "ERROR: the current working directory is not a git repository. Either rerun in a git repository or pass in --repo-root."
+  print_usage
+  exit 1
+}
+
+function get_modified_modules {
+  local -r repo_root="$1"
+  local -r source_ref="$2"
+  local -r target_ref="$3"
+  shift 3
+
+  local -a fexts=("$@")
+
+  local -a args
+  args=("--repo-root" "$repo_root" "--source-ref" "$source_ref" "--target-ref" "$target_ref")
+  for fext in "${fexts[@]}"
+  do
+    args+=("--ext" "$fext")
+  done
+
+  local xargs_options="-r"
+  if [[ $(uname -s) == "Darwin" ]]; then
+    xargs_options=""
+  fi
+
+  "$script_dir"/git-updated-files "${args[@]}" \
+    | xargs ${xargs_options} -L1 dirname \
+    | sort -u
+}
+
+function get_git_tracked_folders {
+  local -r repo_root="$1"
+  local -r target_ref="$2"
+
+  local xargs_options="-r"
+  if [[ $(uname -s) == "Darwin" ]]; then
+    xargs_options=""
+  fi
+
+  git -C "$repo_root" ls-tree -r --name-only "$target_ref" \
+    | xargs ${xargs_options} -L1 dirname \
+    | sort -u
+}
+
+function run {
+  local repo_root=""
+  local source_ref=""
+  local target_ref="$DEFAULT_TARGET_REF"
+  local exclude_deleted='false'
+  local include_deleted_only='false'
+  local -a fexts=()
+
+  while [[ $# -gt 0 ]]; do
+    local key="$1"
+
+    case "$key" in
+      --source-ref)
+        source_ref="$2"
+        shift
+        ;;
+      --target-ref)
+        target_ref="$2"
+        shift
+        ;;
+      --repo-root)
+        repo_root="$2"
+        shift
+        ;;
+      --ext)
+        fexts+=("$2")
+        shift
+        ;;
+      --terragrunt)
+        fexts+=("terragrunt.hcl")
+        ;;
+      --terraform)
+        fexts+=(".tf")
+        fexts+=(".tfvars")
+        ;;
+      --exclude-deleted)
+        exclude_deleted='true'
+        ;;
+      --include-deleted-only)
+        include_deleted_only='true'
+        ;;
+      --help|-h)
+        print_usage
+        exit
+        ;;
+      *)
+        log_to_stderr "ERROR: Unrecognized argument: $key"
+        print_usage
+        exit 1
+        ;;
+    esac
+
+    shift
+  done
+
+  assert_not_empty "--source-ref" "$source_ref"
+
+  if [[ -z "$repo_root" ]]; then
+    repo_root="$(git rev-parse --show-toplevel || fatal_not_a_git_repository)"
+  fi
+
+  local -a modified_folders
+  modified_folders=($(get_modified_modules "$repo_root" "$source_ref" "$target_ref" "${fexts[@]}"))
+
+  local git_tracked_folders
+  git_tracked_folders=($(get_git_tracked_folders "$repo_root" "$target_ref"))
+
+  # Loop over the modified folders to implement the filter logic for deleted folders.
+  #
+  # get_modified_modules includes all folders that were touched between the source_ref and target_ref, including delete
+  # operations. That is, if a file in a folder was deleted, that folder is considered as modified and included in the
+  # list.
+  #
+  # In order to detect if a given folder in the modified list was completely removed (that is, the commits removed
+  # all files in the folder), we can use a heuristic: in the latest commit considered (the target ref), check if that
+  # modified folder is still tracked in git. If all files in the folder were removed, then that folder will no longer be
+  # tracked in git when looking at the target ref (because all the files were removed by then).
+  #
+  # In the if conditions below, we implement this logic by checking the modified folder against the list of tracked
+  # folders in git at the target ref. If the folder is in the tracked folders list, then it still exists. On the other
+  # hand, if the folder is no longer tracked, then it will not be in the list.
+  #
+  # Note that to support piping outputs, we echo each folder that should be returned with a newline.
+  for folder in "${modified_folders[@]}"
+  do
+    # Implement filter logic. Note that if folder is still tracked in git, then the folder is not deleted.
+    if [[ "$exclude_deleted" == 'true' ]]; then
+      if array_contains "$folder" "${git_tracked_folders[@]}"; then
+        echo "$folder"
+      fi
+    elif [[ "$include_deleted_only" == 'true' ]]; then
+      if ! array_contains "$folder" "${git_tracked_folders[@]}"; then
+        echo "$folder"
+      fi
+    else
+      echo "$folder"
+    fi
+  done
+}
+
+run "$@"
