@@ -13,7 +13,6 @@ function terragruntPlan {
         echo "${planOutput}"
         echo
         echo ::set-output name=tf_plan_has_changes::${planHasChanges}
-        exit ${planExitCode}
     fi
     
     # Exit code of 2 indicates success with changes. Print the output, change the
