@@ -39,7 +39,7 @@ Inputs configure Terraform GitHub Actions to perform different actions.
 | Input Name  | Description             | Required |
 | :---------- | :---------------------- | :------: |
 | source_ref  | Source Reference (HEAD) |  `Yes`   |
-| target_ref  | Target Reference (BASE) |   `No`   |
+| target_ref  | Target Reference (BASE) |  `Yes`   |
 | environment | Environment             |  `Yes`   |
 
 ## Outputs
