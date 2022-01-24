@@ -10,7 +10,7 @@ function terragruntFormat {
     if [ ${formatExitCode} -eq 0 ]; then
         echo "format: info: successfully formated Terragrunt configuration in ${tfWorkingDir}"
         echo "${formatOutput}"
-        echo
+        echo 
         exit ${formatExitCode}
     fi
     

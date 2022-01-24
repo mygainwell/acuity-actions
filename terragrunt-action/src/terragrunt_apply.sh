@@ -5,14 +5,12 @@ function terragruntApply {
     echo "apply: info: applying Terragrunt configuration in ${tfWorkingDir}"
     applyOutput=$(${tfBinary} run-all apply -auto-approve -input=false --terragrunt-non-interactive --terragrunt-include-external-dependencies ${*} 2>&1)
     applyExitCode=${?}
-    applyCommentStatus="Failed"
     
     # Exit code of 0 indicates success. Print the output and exit.
     if [ ${applyExitCode} -eq 0 ]; then
         echo "apply: info: successfully applied Terragrunt configuration in ${tfWorkingDir}"
         echo "${applyOutput}"
         echo
-        applyCommentStatus="Success"
     fi
     
     # Exit code of !0 indicates failure.
