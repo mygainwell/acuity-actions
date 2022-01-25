@@ -32,6 +32,28 @@ jobs:
           environment: dev
 ```
 
+```yaml
+name: Changed Stacks
+on: [pull_request]
+
+jobs:
+  pre-reqs:
+    name: 'Terragrunt'
+    runs-on: ubuntu-latest
+    outputs:
+      stacks: ${{ steps.stacks-array.outputs.stacks }}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@master
+      - name: changed stacks
+        id: stacks-array
+        uses: mygainwell/acutiy-actions/changed-stacks
+        with:
+          source_ref: b668df29e1011a0926003320ecfcb45a87544894
+          target_ref: origin/main
+          environment: dev
+```
+
 ## Inputs
 
 Inputs configure Terraform GitHub Actions to perform different actions.
