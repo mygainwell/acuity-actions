@@ -6,7 +6,6 @@ function terragruntPlan {
     planOutput=$(${tfBinary} plan -detailed-exitcode -input=false ${*} 2>&1)
     planExitCode=${?}
     planHasChanges=false
-    planCommentStatus="Failed"
     
     # Exit code of 0 indicates success with no changes. Print the output and exit.
     if [ ${planExitCode} -eq 0 ]; then
@@ -14,7 +13,6 @@ function terragruntPlan {
         echo "${planOutput}"
         echo
         echo ::set-output name=tf_plan_has_changes::${planHasChanges}
-        exit ${planExitCode}
     fi
     
     # Exit code of 2 indicates success with changes. Print the output, change the
@@ -22,7 +20,6 @@ function terragruntPlan {
     if [ ${planExitCode} -eq 2 ]; then
         planExitCode=0
         planHasChanges=true
-        planCommentStatus="Success"
         echo "plan: info: successfully planned Terragrunt configuration in ${tfWorkingDir}"
         echo "${planOutput}"
         echo
@@ -32,7 +29,7 @@ function terragruntPlan {
         planOutput=$(echo "${planOutput}" | sed -r -e 's/^  \+/\+/g' | sed -r -e 's/^  ~/~/g' | sed -r -e 's/^  -/-/g')
         
         # If output is longer than max length (65536 characters), keep last part
-        planOutput=$(echo "${planOutput}" | tail -c 65000 )
+        planOutput=$(echo "${planOutput}" | head -c 65300 )
     fi
     
     # Exit code of !0 indicates failure.

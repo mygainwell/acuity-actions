@@ -155,6 +155,7 @@ function installTerragrunt {
 function main {
     # Source the other files to gain access to their functions
     scriptDir=$(dirname ${0})
+    source ${scriptDir}/terragrunt_format.sh
     source ${scriptDir}/terragrunt_init.sh
     source ${scriptDir}/terragrunt_validate.sh
     source ${scriptDir}/terragrunt_plan.sh
@@ -173,6 +174,11 @@ function main {
     cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
     
     case "${tfSubcommand}" in
+        format)
+            echo "::group::format"
+            terragruntFormat ${*}
+            echo "::endgroup::"
+        ;;
         init)
             echo "::group::init"
             terragruntInit ${*}

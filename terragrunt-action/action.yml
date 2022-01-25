@@ -26,14 +26,6 @@ inputs:
   tg_subcommand:
     description: 'Terraform or Terragrunt subcommand to execute.'
     required: true
-  tf_cli_credentials_hostname:
-    description: 'Hostname for the CLI credentials file.'
-    required: false
-    default: 'app.terraform.io'
-  tf_cli_credentials_token:
-    description: 'Token for the CLI credentials file stored in AWS Secrets Manager.'
-    required: false
-    default: ''
   tg_working_dir:
     description: 'Terragrunt working directory.'
     required: false
