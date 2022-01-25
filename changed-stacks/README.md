@@ -58,10 +58,10 @@ jobs:
 
 Inputs configure Terraform GitHub Actions to perform different actions.
 
-| Input Name  | Description             | Required |
-| :---------- | :---------------------- | :------: |
-| source_ref  | Source Reference (HEAD) |  `Yes`   |
-| target_ref  | Target Reference (BASE) |  `Yes`   |
+| Input Name  | Description             | Required |                 Example                  |
+| :---------- | :---------------------- | :------: | :--------------------------------------: |
+| source_ref  | Source Reference (HEAD) |  `Yes`   | 9a95e980c9325ab2333cb0da0f06fd798fac5aae |
+| target_ref  | Target Reference (BASE) |  `Yes`   |               origin/main                |
 | environment | Environment             |  `Yes`   |
 
 ## Outputs
