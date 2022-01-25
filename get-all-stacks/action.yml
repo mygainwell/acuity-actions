@@ -16,13 +16,12 @@ runs:
     run: |
       echo "::set-output name=list:: \
       $(find stacks -type f -name 'terragrunt.hcl' \
-      | sed -r 's|/[^/]+$||' \
-      | sort \
-      | uniq \
-      | sed -z 's/^/"/g' \
-      | sed -z 's/\n/","/g' \
-      | sed 's/.\{2\}$//' \
-      | sed -e 's/$/]}/' \
-      | sed -e 's/^/[/' \
-      | sed -e 's/^/{"stacks":/')"
+        | sed 's|stacks/||g' \
+        | xargs -I {} dirname {} \
+        | sed -z 's/^/"/g' \
+        | sed -z 's/\n/","/g' \
+        | sed 's/.\{2\}$//' \
+        | sed -e 's/$/]}/' \
+        | sed -e 's/^/[/' \
+        | sed -e 's/^/{"stacks":/')"
     shell: bash
