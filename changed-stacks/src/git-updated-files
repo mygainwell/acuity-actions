@@ -1,0 +1,176 @@
+#!/bin/bash
+#
+# This script can be used to detect all the files that have been updated between two git refs (branch, tag, sha, etc).
+# This can be used in a CI pipeline to find various scripts and files that have changed, and run actions relevant to
+# those files.
+#
+# Specifically, this script will search all the changed files between two refs and return the list of files that
+# were changed. You can filter the files using the `--ext` argument. For convenience, this script also exposes the
+# shorthands `--terraform` and `--terragrunt` which uses the following heuristics:
+#
+# For terraform, any folder containing .tf or .tfvars files that changed will be returned.
+# For terragrunt, any folder containing terragrunt.hcl files that changed will be returned.
+
+
+set -e
+
+readonly DEFAULT_TARGET_REF="HEAD"
+
+function print_usage {
+  log_to_stderr
+  log_to_stderr  "Usage: git-updated-files [OPTIONS]"
+  log_to_stderr
+  log_to_stderr "This script can be used to detect all the files that have been updated between two git refs (branch, tag, sha, etc)."
+  log_to_stderr "This can be used in a CI pipeline to find various scripts and files that have changed, and run actions relevant to"
+  log_to_stderr "those files."
+  log_to_stderr
+  log_to_stderr "Specifically, this script will search all the changed files between two refs and return the list of files that"
+  log_to_stderr "were changed. You can filter the files using the `--ext` argument. For convenience, this script also exposes the"
+  log_to_stderr "shorthands `--terraform` and `--terragrunt` which uses the following heuristics:"
+  log_to_stderr
+  log_to_stderr "For terraform, any folder containing .tf or .tfvars files that changed will be returned."
+  log_to_stderr "For terragrunt, any folder containing terragrunt.hcl files that changed will be returned."
+  log_to_stderr
+  log_to_stderr "Options:"
+  log_to_stderr
+  log_to_stderr -e "  --source-ref\t\tThe git ref (branch, tag, or SHA1) that is the source of the diff (what you are comparing from). Required."
+  log_to_stderr -e "  --target-ref\t\tThe git ref (branch, tag, or SHA1) that is the target of the diff (what you are comparing to). Defaults to the current SHA (HEAD) of the repo. Optional."
+  log_to_stderr -e "  --repo-root\t\tThe root path of the git repository. This can be automatically detected if the current working directory is a git repository. Required if current directory is not a git repository."
+  log_to_stderr -e "  --ext\t\tThe file extensions to search for. You can pass in multiple. Optional."
+  log_to_stderr -e "  --exclude-ext\t\tThe file extensions to exclude from the search. You can pass in multiple. Optional."
+  log_to_stderr -e "  --terragrunt\t\tConvenience flag to automatically select extensions that match terragrunt modules.  Equivalent to '--ext terragrunt.hcl'. Optional."
+  log_to_stderr -e "  --terraform\t\tConvenience flag to automatically select extensions that match terraform modules. Equivalent to '--ext .tf --ext .tfvars'. Optional."
+  log_to_stderr -e "  --help\t\tPrint this help text and exit."
+  log_to_stderr
+  log_to_stderr "Example:"
+  log_to_stderr
+  log_to_stderr "  git-updated-files --source-ref master --target-ref development --terragrunt --ext .yaml --ext .yml"
+  log_to_stderr
+}
+
+function log_to_stderr {
+  >&2 echo "$@"
+}
+
+function assert_not_empty {
+  local -r arg_name="$1"
+  local -r arg_value="$2"
+
+  if [[ -z "$arg_value" ]]; then
+    >&2 echo "ERROR: The value for '$arg_name' cannot be empty"
+    print_usage
+    exit 1
+  fi
+}
+
+function fatal_not_a_git_repository {
+  log_to_stderr "ERROR: the current working directory is not a git repository. Either rerun in a git repository or pass in --repo-root."
+  print_usage
+  exit 1
+}
+
+# Given an array of file extensions, convert that to a regex that searches for strings that end with one of those
+# elements.
+function file_extensions_to_regex {
+  local -ar fexts=("$@")
+
+  local is_first="true"
+  local regex="("
+  for ext in "${fexts[@]}"; do
+    if [[ "$is_first" == "true" ]]; then
+      regex+="$ext"
+      is_first="false"
+    else
+      regex+="|$ext"
+    fi
+  done
+  regex+=")\$"
+
+  echo "$regex"
+}
+
+function get_modified_files {
+  local -r repo_root="$1"
+  local -r source_ref="$2"
+  local -r target_ref="$3"
+  local -r include_regex="$4"
+  local -r exclude_regex="$5"
+
+  git -C "$repo_root" diff --name-only "$source_ref" "$target_ref" \
+    | egrep "$include_regex" \
+    | egrep -v "$exclude_regex" \
+    | sort -u
+}
+
+function run {
+  local repo_root=""
+  local source_ref=""
+  local target_ref="$DEFAULT_TARGET_REF"
+  local -a fexts=()
+  local -a exclude_fexts=()
+
+  while [[ $# -gt 0 ]]; do
+    local key="$1"
+
+    case "$key" in
+      --source-ref)
+        source_ref="$2"
+        shift
+        ;;
+      --target-ref)
+        target_ref="$2"
+        shift
+        ;;
+      --repo-root)
+        repo_root="$2"
+        shift
+        ;;
+      --ext)
+        fexts+=("$2")
+        shift
+        ;;
+      --exclude-ext)
+        exclude_fexts+=("$2")
+        shift
+        ;;
+      --terragrunt)
+        fexts+=("terragrunt.hcl")
+        ;;
+      --terraform)
+        fexts+=(".tf")
+        fexts+=(".tfvars")
+        ;;
+      --help|-h)
+        print_usage
+        exit
+        ;;
+      *)
+        log_to_stderr "ERROR: Unrecognized argument: $key"
+        print_usage
+        exit 1
+        ;;
+    esac
+
+    shift
+  done
+
+  assert_not_empty "--source-ref" "$source_ref"
+
+  if [[ -z "$repo_root" ]]; then
+    repo_root="$(git rev-parse --show-toplevel || fatal_not_a_git_repository)"
+  fi
+
+  local include_regex
+  include_regex="$(file_extensions_to_regex "${fexts[@]}")"
+
+  # file_extensions_to_regex will return a regex that matches everything if the given array is empty, so we need to use
+  # an inverse regex that doesn't match anything if exclude_fexts is empty, as we want to exclude nothing.
+  local exclude_regex='$^'
+  if (( ${#exclude_fexts[@]} > 0 )); then
+    exclude_regex="$(file_extensions_to_regex "${exclude_fexts[@]}")"
+  fi
+
+  get_modified_files "$repo_root" "$source_ref" "$target_ref" "$include_regex" "$exclude_regex"
+}
+
+run "$@"
