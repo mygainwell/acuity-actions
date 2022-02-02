@@ -39,8 +39,6 @@ function parse_inputs {
   # Optional
 
   terratestArgs=${INPUT_TERRATEST_ARGS}
-
-
 }
 
 function createSSHKeyfile {
@@ -65,14 +63,36 @@ function awsProfile {
   aws_access_key_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.AWS_ACCESS_KEY_ID')
   aws_secret_access_key=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.AWS_SECRET_ACCESS_KEY')
   aws_iam_role=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${iam_creds_id} --query SecretString --output text | jq -r '.AWS_IAM_ROLE_NAME')
-  aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.EPHMERICAL')
+
+  ephem_aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.EPHMERICAL')
+  dev_aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.DEV')
+  stg_aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.STAGE')
+  prod_aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.PROD')
+  mgmt_aws_account_id=$(aws --region ${aws_region} secretsmanager get-secret-value --secret-id ${aws_account_ids} --query SecretString --output text | jq -r '.MGMT')
+
   echo "[default]
   aws_access_key_id = $aws_access_key_id
   aws_secret_access_key = $aws_secret_access_key
   region = ${aws_region}
   
-  [github]
-  role_arn = arn:aws:iam::$aws_account_id:role/$aws_iam_role
+  [ephem]
+  role_arn = arn:aws:iam::$ephem_aws_account_id:role/$aws_iam_role
+  source_profile = default
+
+  [dev]
+  role_arn = arn:aws:iam::$dev_aws_account_id:role/$aws_iam_role
+  source_profile = default
+  
+  [stg]
+  role_arn = arn:aws:iam::$stg_aws_account_id:role/$aws_iam_role
+  source_profile = default
+  
+  [prod]
+  role_arn = arn:aws:iam::$prod_aws_account_id:role/$aws_iam_role
+  source_profile = default
+  
+  [mgmt]
+  role_arn = arn:aws:iam::$mgmt_aws_account_id:role/$aws_iam_role
   source_profile = default" > ~/.aws/credentials 
 }
 
@@ -81,7 +101,7 @@ function main {
   createSSHKeyfile
   awsProfile
   
-  export AWS_PROFILE=github
+  export AWS_PROFILE=ephem
 
   cd $workingDir
   go test ${terratestArgs}
