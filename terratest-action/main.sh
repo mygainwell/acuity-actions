@@ -87,7 +87,7 @@ function awsProfile {
   role_arn = arn:aws:iam::$stg_aws_account_id:role/$aws_iam_role
   source_profile = default
   
-  [prod]
+  [prd]
   role_arn = arn:aws:iam::$prod_aws_account_id:role/$aws_iam_role
   source_profile = default
   
