@@ -38,5 +38,6 @@ act
 
 Test shell scripts with BATS
 ```
+git submodule update --init --recursive
 ./test/bats/bin/bats test
 ```
