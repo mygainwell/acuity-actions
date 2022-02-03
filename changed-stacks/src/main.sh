@@ -42,10 +42,22 @@ function main {
 
 	parse_inputs
 
-	static_common_files_array=( development.hcl production.hcl staging.hcl common.hcl ephemeral.hcl )
+	# This returns a list of any stack folder that has changes when comparing source to target
 	stack_files_array=( $("$updated_folders" --source-ref "$source_ref" --target-ref "$target_ref" --terragrunt | grep stacks | sed 's|stacks/||g') )
+	# This return a list of any stack folder that had a change to it's /input/*.hcl file.
 	input_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep inputs/${environment}/ | grep inputs.hcl | sed "s|inputs/${environment}/||g" | xargs -I {} dirname {}) )
-	common_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep inputs/${environment}/ | grep -v inputs.hcl | sed "s|inputs/${environment}/||g") )
+	
+	# Get files at common files at root 
+	# /inputs/${environment}/${environment}.hcl
+	# /common.hcl
+	# /stacks/config.hcl	
+	
+	# TODO: Need to decide on accounts.json
+	# "dev.hcl" "prd.hcl" "stg.hcl" "ephem.hcl" "mgmt.hcl" "config.hcl" "common.hcl"
+	static_common_files_array=( ${environment}.hcl config.hcl common.hcl)	
+	common_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep 'inputs/mgmt*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"))
+	
+	grep 'inputs/${environment}/'\|'stacks\'\| | grep -v inputs.hcl | sed "s|inputs/${environment}/||g") )
 	
 	updated_stacks_array=("${stack_files_array[@]}" "${input_files_array[@]}")
 
