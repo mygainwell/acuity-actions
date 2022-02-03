@@ -1,0 +1,28 @@
+name: Changed Stacks
+
+on:
+  push:
+    paths:
+      - 'test/test-changed-stacks'
+      - 'changed-stacks/**'
+      - '.github/workflows/changed-stacks.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+    steps:
+      - name: Setup BATS
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: 1.2.1
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Test
+        run: bats -r .
