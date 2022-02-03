@@ -1,0 +1,20 @@
+name: Changed Stacks in Live repo
+description: Identifies the list of files in the live repo
+author: Gainwell Technologies
+inputs:
+  source_ref:
+    description: starting point for identifying changes
+    required: true
+  target_ref:
+    description: end point for identifying changes
+    required: true
+  environment:
+    description: target environment
+    required: true
+outputs:
+  stacks:
+    description: matrix of stacks to be executed
+
+runs:
+  using: docker
+  image: './Dockerfile'

@@ -5,7 +5,6 @@ function terragruntImport {
     echo "import: info: importing Terragrunt configuration in ${tfWorkingDir}"
     importOutput=$(${tfBinary} import -input=false ${*} 2>&1)
     importExitCode=${?}
-    importCommentStatus="Failed"
     
     # Exit code of 0 indicates success with no changes. Print the output and exit.
     if [ ${importExitCode} -eq 0 ]; then

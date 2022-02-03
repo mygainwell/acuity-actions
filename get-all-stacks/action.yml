@@ -1,0 +1,27 @@
+name: "Get JSON Matrix of all Stacks"
+description: "Get All Child Folders in /Stacks/ where terragrunt.hcl exists."
+
+outputs:
+  list:
+    description: >-
+      A JSON object that contains an array in the following format:
+      {"stacks":["value1","value2","..."]}
+    value: ${{ steps.stacks.outputs.list }}
+
+runs:
+  using: "composite"
+  steps:
+  - name: Generate List
+    id: stacks
+    run: |
+      echo "::set-output name=list:: \
+      $(find stacks -type f -name 'terragrunt.hcl' \
+        | sed 's|stacks/||g' \
+        | xargs -I {} dirname {} \
+        | sed -z 's/^/"/g' \
+        | sed -z 's/\n/","/g' \
+        | sed 's/.\{2\}$//' \
+        | sed -e 's/$/]}/' \
+        | sed -e 's/^/[/' \
+        | sed -e 's/^/{"stacks":/')"
+    shell: bash
