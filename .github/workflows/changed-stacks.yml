@@ -3,7 +3,7 @@ name: Changed Stacks
 on:
   push:
     paths:
-      - 'test/test-changed-stacks'
+      - 'test/changed-stacks.bats'
       - 'changed-stacks/**'
       - '.github/workflows/changed-stacks.yml'
   pull_request:
