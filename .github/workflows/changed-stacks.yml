@@ -16,13 +16,9 @@ jobs:
     strategy:
         fail-fast: false
     steps:
-      - name: Setup BATS
-        uses: mig4/setup-bats@v1
-        with:
-          bats-version: 1.2.1
-
-      - name: Check out code
+      - name: "Setup - Checkout"
         uses: actions/checkout@v1
-
-      - name: Test
-        run: bats -r .
+        with:
+          submodules: 'recursive'
+      - name: "Run - Tests"
+        run: ./test/bats/bin/bats test
