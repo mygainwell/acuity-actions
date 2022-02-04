@@ -109,6 +109,7 @@ function input_files_array() {
 	echo "${array[@]}" | grep inputs/${environment}/ | grep inputs.hcl | sed "s|inputs/${environment}/||g" | xargs -I {} dirname {}
 }
 
-function updatedStacks {
-	:
+function static_common_files_array() {
+	array=(${environment}.hcl config.hcl common.hcl)
+	echo "${array[@]}"
 }

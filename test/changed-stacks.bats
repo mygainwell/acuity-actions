@@ -34,8 +34,6 @@ setup() {
 
 @test "source to changed-stacks with fake input" {
   source ./changed-stacks/src/main.sh
-  updatedStacks=$(updatedStacks)
-  ((updatedStacks == null))
 }
 
 @test "stack files array filter" {
@@ -51,4 +49,11 @@ setup() {
   updated_files=("common.hcl" "inputs/ephem/foo/inputs.hcl" "stacks/foo/terragrunt.hcl")
   output=$(input_files_array "${updated_files[@]}")
   assert_output "common.hcl foo/inputs.hcl stacks/foo"
+}
+
+@test "static common files array filter" {
+  export INPUT_ENVIRONMENT="ephem"
+  source ./changed-stacks/src/main.sh
+  output=$(static_common_files_array)
+  assert_output "ephem.hcl config.hcl common.hcl"
 }
