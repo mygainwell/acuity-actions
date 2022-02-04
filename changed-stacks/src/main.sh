@@ -8,14 +8,14 @@ function parse_inputs {
 		echo "ERROR: Source Reference is required"
 		exit 1
 	else
-		source_ref=${INPUT_SOURCE_REF}
+		source_ref=origin/${INPUT_SOURCE_REF}
 	fi
 
 	if [ -z ${INPUT_TARGET_REF} ]; then
 		echo "ERROR: Target Reference is required"
 		exit 1
 	else
-		target_ref=${INPUT_TARGET_REF}
+		target_ref=origin/${INPUT_TARGET_REF}
 	fi
 
 	if [ -z ${INPUT_ENVIRONMENT} ]; then
