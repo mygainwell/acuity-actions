@@ -98,3 +98,15 @@ function main {
 }
 
 main "${*}"
+
+function stack_files_array() {
+	array=("$@")
+	echo "${array[@]}" | grep stacks | sed 's|stacks/||g'
+}
+
+function common {
+	:
+}
+function updatedStacks {
+	:
+}

@@ -15,3 +15,37 @@ setup() {
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Source Reference is required"
 }
+
+@test "invoking changed-stacks with nonexistent target prints an error" {
+  export INPUT_SOURCE_REF="source"
+  run ./changed-stacks/src/main.sh
+  assert_output --partial "ERROR: Target Reference is required"
+}
+
+@test "invoking changed-stacks with nonexistent environment prints an error" {
+  export INPUT_SOURCE_REF="source"
+  export INPUT_TARGET_REF="target"
+  run ./changed-stacks/src/main.sh
+  assert_output --partial "ERROR: Environment is Required"
+}
+
+@test "source to changed-stacks with fake input" {
+  export INPUT_SOURCE_REF="source"
+  export INPUT_TARGET_REF="target"
+  export INPUT_ENVIRONMENT="environment"
+  source ./changed-stacks/src/main.sh
+  common=$(common)
+  ((common == null))
+  updatedStacks=$(updatedStacks)
+  ((updatedStacks == null))
+}
+
+@test "stack files array grep sed" {
+  export INPUT_SOURCE_REF="source"
+  export INPUT_TARGET_REF="target"
+  export INPUT_ENVIRONMENT="environment"
+  source ./changed-stacks/src/main.sh
+  updated_folders=("input" "inputs/foo" "stacks" "stacks/foo")
+  output=$(stack_files_array "${updated_folders[@]}")
+  assert_output "input inputs/foo stacks foo"
+}

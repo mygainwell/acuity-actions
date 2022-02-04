@@ -27,30 +27,10 @@ jobs:
         id: stacks-array
         uses: mygainwell/acutiy-actions/changed-stacks
         with:
+          # current branch (base)
           source_ref: origin/${{ github.event.pull_request.head.ref }}
+          # destination branch of the pull request
           target_ref: origin/${{ github.event.pull_request.base.ref }}
-          environment: dev
-```
-
-```yaml
-name: Changed Stacks
-on: [pull_request]
-
-jobs:
-  pre-reqs:
-    name: 'Terragrunt'
-    runs-on: ubuntu-latest
-    outputs:
-      stacks: ${{ steps.stacks-array.outputs.stacks }}
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@master
-      - name: changed stacks
-        id: stacks-array
-        uses: mygainwell/acutiy-actions/changed-stacks
-        with:
-          source_ref: b668df29e1011a0926003320ecfcb45a87544894
-          target_ref: origin/main
           environment: dev
 ```
 
@@ -58,11 +38,11 @@ jobs:
 
 Inputs configure Terraform GitHub Actions to perform different actions.
 
-| Input Name  | Description             | Required |                 Example                  |
-| :---------- | :---------------------- | :------: | :--------------------------------------: |
-| source_ref  | Source Reference (HEAD) |  `Yes`   | 9a95e980c9325ab2333cb0da0f06fd798fac5aae |
-| target_ref  | Target Reference (BASE) |  `Yes`   |               origin/main                |
-| environment | Environment             |  `Yes`   |
+| Input Name  | Description             | Required | Example     |
+| :---------- | :---------------------- | :------: | :---------: |
+| source_ref  | Source Reference (HEAD) |  `Yes`   | b668df2     |
+| target_ref  | Target Reference (BASE) |  `Yes`   | origin/main |
+| environment | Environment             |  `Yes`   |             |
 
 ## Outputs
 
