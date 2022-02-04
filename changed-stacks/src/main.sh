@@ -113,3 +113,8 @@ function static_common_files_array() {
 	array=(${environment}.hcl config.hcl common.hcl)
 	echo "${array[@]}"
 }
+
+function common_files_array() {
+	array=("$@")
+	echo "${array[@]}" | grep 'inputs/mgmt*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"
+}

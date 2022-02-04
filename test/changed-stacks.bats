@@ -14,19 +14,19 @@ setup() {
     export INPUT_ENVIRONMENT="environment"
 }
 
-@test "invoking changed-stacks with nonexistent source prints an error" {
+@test "nonexistent source prints an error" {
   unset INPUT_SOURCE_REF
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Source Reference is required"
 }
 
-@test "invoking changed-stacks with nonexistent target prints an error" {
+@test "nonexistent target prints an error" {
   unset INPUT_TARGET_REF
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Target Reference is required"
 }
 
-@test "invoking changed-stacks with nonexistent environment prints an error" {
+@test "nonexistent environment prints an error" {
   unset INPUT_ENVIRONMENT
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Environment is Required"
@@ -56,4 +56,12 @@ setup() {
   source ./changed-stacks/src/main.sh
   output=$(static_common_files_array)
   assert_output "ephem.hcl config.hcl common.hcl"
+}
+
+@test "common files array filter" {
+  export INPUT_ENVIRONMENT="ephem"
+  source ./changed-stacks/src/main.sh
+  updated_files=("common.hcl" "inputs/ephem/foo/inputs.hcl" "stacks/foo/terragrunt.hcl")
+  output=$(common_files_array "${updated_files[@]}")
+  assert_output "terragrunt.hcl"
 }
