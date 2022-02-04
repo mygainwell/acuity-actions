@@ -1,4 +1,7 @@
 #!/bin/bash
+# INPUT_SOURCE_REF=origin/directory-services
+# INPUT_TARGET_REF=origin/main
+# INPUT_ENVIRONMENT=mgmt
 
 function parse_inputs {
 	if [ -z ${INPUT_SOURCE_REF} ]; then
@@ -34,6 +37,8 @@ containsElement () {
 }
 
 function main {
+	echo "Newest Change"
+
 	deploy_all=false
 	repo_root=$(git rev-parse --show-toplevel)
 	scriptDir=$(dirname ${0})
