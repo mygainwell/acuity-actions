@@ -1,7 +1,4 @@
 #!/bin/bash
-# INPUT_SOURCE_REF=origin/directory-services
-# INPUT_TARGET_REF=origin/main
-# INPUT_ENVIRONMENT=mgmt
 
 function parse_inputs {
 	if [ -z ${INPUT_SOURCE_REF} ]; then
@@ -47,8 +44,6 @@ function main {
 	updated_folders=${scriptDir}/git-updated-folders
 	updated_files=${scriptDir}/git-updated-files
 
-	git fetch origin main
-
 	parse_inputs
 
 	# This returns a list of any stack folder that has changes when comparing source to target
@@ -65,7 +60,6 @@ function main {
 	# "dev.hcl" "prd.hcl" "stg.hcl" "ephem.hcl" "mgmt.hcl" "config.hcl" "common.hcl"
 	static_common_files_array=( ${environment}.hcl config.hcl common.hcl)	
 	common_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep 'inputs/${environment}*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"))
-	echo $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref")
 	updated_stacks_array=("${stack_files_array[@]}" "${input_files_array[@]}")
 
 	for file in "${common_files_array[@]}"; do
