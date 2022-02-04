@@ -34,15 +34,21 @@ setup() {
 
 @test "source to changed-stacks with fake input" {
   source ./changed-stacks/src/main.sh
-  common=$(common)
-  ((common == null))
   updatedStacks=$(updatedStacks)
   ((updatedStacks == null))
 }
 
-@test "stack files array grep sed" {
+@test "stack files array filter" {
   source ./changed-stacks/src/main.sh
-  updated_folders=("input" "inputs/foo" "stacks" "stacks/foo")
+  updated_folders=("inputs" "inputs/foo" "stacks" "stacks/foo")
   output=$(stack_files_array "${updated_folders[@]}")
-  assert_output "input inputs/foo stacks foo"
+  assert_output "inputs inputs/foo stacks foo"
+}
+
+@test "input files array filter" {
+  export INPUT_ENVIRONMENT="ephem"
+  source ./changed-stacks/src/main.sh
+  updated_files=("common.hcl" "inputs/ephem/foo/inputs.hcl" "stacks/foo/terragrunt.hcl")
+  output=$(input_files_array "${updated_files[@]}")
+  assert_output "common.hcl foo/inputs.hcl stacks/foo"
 }

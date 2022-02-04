@@ -104,9 +104,11 @@ function stack_files_array() {
 	echo "${array[@]}" | grep stacks | sed 's|stacks/||g'
 }
 
-function common {
-	:
+function input_files_array() {
+	array=("$@")
+	echo "${array[@]}" | grep inputs/${environment}/ | grep inputs.hcl | sed "s|inputs/${environment}/||g" | xargs -I {} dirname {}
 }
+
 function updatedStacks {
 	:
 }
