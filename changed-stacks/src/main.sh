@@ -63,7 +63,7 @@ function main {
 	# "dev.hcl" "prd.hcl" "stg.hcl" "ephem.hcl" "mgmt.hcl" "config.hcl" "common.hcl"
 	static_common_files_array=( ${environment}.hcl config.hcl common.hcl)	
 	common_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep 'inputs/${environment}*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"))
-	echo $("$updated_file" --source-ref "$source_ref" --target-ref "$target_ref")
+	echo $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref")
 	updated_stacks_array=("${stack_files_array[@]}" "${input_files_array[@]}")
 
 	for file in "${common_files_array[@]}"; do
