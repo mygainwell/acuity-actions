@@ -47,7 +47,8 @@ function main {
 	updated_folders=${scriptDir}/git-updated-folders
 	updated_files=${scriptDir}/git-updated-files
 
-	echo $(git fetch origin main)
+	git fetch origin main
+
 	parse_inputs
 
 	# This returns a list of any stack folder that has changes when comparing source to target
