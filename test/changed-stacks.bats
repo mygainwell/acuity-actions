@@ -65,3 +65,11 @@ setup() {
   output=$(common_files_array "${updated_files[@]}")
   assert_output "terragrunt.hcl"
 }
+
+@test "updated stacks array filter" {
+  export INPUT_ENVIRONMENT="ephem"
+  source ./changed-stacks/src/main.sh
+  updated_files=("common.hcl" "inputs/ephem/foo/inputs.hcl" "stacks/foo/terragrunt.hcl")
+  output=$(updated_stacks_array "${updated_files[@]}")
+  assert_output "common.hcl inputs/ephem/foo/inputs.hcl foo/terragrunt.hcl input_files_array common.hcl inputs/ephem/foo/inputs.hcl foo/terragrunt.hcl"
+}

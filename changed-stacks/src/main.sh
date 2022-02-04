@@ -118,3 +118,8 @@ function common_files_array() {
 	array=("$@")
 	echo "${array[@]}" | grep 'inputs/mgmt*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"
 }
+
+function updated_stacks_array() {
+	array=("$@")
+	echo $(stack_files_array "${array[@]}" input_files_array "${array[@]}")
+}
