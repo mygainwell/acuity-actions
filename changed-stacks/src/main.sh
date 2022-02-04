@@ -5,14 +5,14 @@ function parse_inputs {
 		echo "ERROR: Source Reference is required"
 		exit 1
 	else
-		source_ref=${INPUT_SOURCE_REF}
+		source_ref=origin/${INPUT_SOURCE_REF}
 	fi
 
 	if [ -z ${INPUT_TARGET_REF} ]; then
 		echo "ERROR: Target Reference is required"
 		exit 1
 	else
-		target_ref=${INPUT_TARGET_REF}
+		target_ref=origin/${INPUT_TARGET_REF}
 	fi
 
 	if [ -z ${INPUT_ENVIRONMENT} ]; then
@@ -34,6 +34,10 @@ containsElement () {
 }
 
 function main {
+	echo "INPUT_SOURCE_REF=${INPUT_SOURCE_REF}"
+	echo "INPUT_TARGET_REF=${INPUT_TARGET_REF}"
+	echo "INPUT_ENVIRONMENT=${INPUT_ENVIRONMENT}"
+
 	deploy_all=false
 	repo_root=$(git rev-parse --show-toplevel)
 	scriptDir=$(dirname ${0})
@@ -55,8 +59,7 @@ function main {
 	# TODO: Need to decide on accounts.json
 	# "dev.hcl" "prd.hcl" "stg.hcl" "ephem.hcl" "mgmt.hcl" "config.hcl" "common.hcl"
 	static_common_files_array=( ${environment}.hcl config.hcl common.hcl)	
-	common_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep 'inputs/mgmt*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"))
-	
+	common_files_array=( $("$updated_files" --source-ref "$source_ref" --target-ref "$target_ref" --ext .hcl --exclude-ext terragrunt.hcl | grep 'inputs/${environment}*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"))
 	updated_stacks_array=("${stack_files_array[@]}" "${input_files_array[@]}")
 
 	for file in "${common_files_array[@]}"; do
