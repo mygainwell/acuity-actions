@@ -9,30 +9,30 @@ setup() {
     DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && pwd )"
     # make executables in src/ visible to PATH
     PATH="$DIR/../src:$PATH"
+    export INPUT_SOURCE_REF="source"
+    export INPUT_TARGET_REF="target"
+    export INPUT_ENVIRONMENT="environment"
 }
 
 @test "invoking changed-stacks with nonexistent source prints an error" {
+  unset INPUT_SOURCE_REF
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Source Reference is required"
 }
 
 @test "invoking changed-stacks with nonexistent target prints an error" {
-  export INPUT_SOURCE_REF="source"
+  unset INPUT_TARGET_REF
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Target Reference is required"
 }
 
 @test "invoking changed-stacks with nonexistent environment prints an error" {
-  export INPUT_SOURCE_REF="source"
-  export INPUT_TARGET_REF="target"
+  unset INPUT_ENVIRONMENT
   run ./changed-stacks/src/main.sh
   assert_output --partial "ERROR: Environment is Required"
 }
 
 @test "source to changed-stacks with fake input" {
-  export INPUT_SOURCE_REF="source"
-  export INPUT_TARGET_REF="target"
-  export INPUT_ENVIRONMENT="environment"
   source ./changed-stacks/src/main.sh
   common=$(common)
   ((common == null))
@@ -41,9 +41,6 @@ setup() {
 }
 
 @test "stack files array grep sed" {
-  export INPUT_SOURCE_REF="source"
-  export INPUT_TARGET_REF="target"
-  export INPUT_ENVIRONMENT="environment"
   source ./changed-stacks/src/main.sh
   updated_folders=("input" "inputs/foo" "stacks" "stacks/foo")
   output=$(stack_files_array "${updated_folders[@]}")
