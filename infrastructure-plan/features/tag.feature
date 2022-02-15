@@ -8,9 +8,10 @@ Feature: Tag Naming Standards AWS
         And its value must match the "<value>" regex
 
         Examples:
-        | tags                 | value                          |
-        | acuity:resourcegroup | .+                             |
-        | acuity:application   | .+                             |
-        | acuity:owner         | .+                             |
-        | acuity:environment   | ^(ephem\|prd\|mgmt\|dev\|stg)$ |
-        | acuity:compliance    | ^(FedRAMP\|None)$              | 
+        | tags                 | value                                                       |
+        | Name                 | .+                                                          |
+        | Company              | .+                                                          |
+        | Environment          | ^(Ephemeral\|Production\|Management\|Development\|Staging)$ |
+        | Project              | .+                                                          |
+        | Email                | .+                                                          |
+        | ManagedBy            | ^(Terraform)$                                               |
