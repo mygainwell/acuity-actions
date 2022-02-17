@@ -9,7 +9,6 @@ Feature: Tag Naming Standards AWS
 
         Examples:
         | tags                 | value                                                       |
-        | Name                 | .+                                                          |
         | Company              | .+                                                          |
         | Environment          | ^(Ephemeral\|Production\|Management\|Development\|Staging)$ |
         | Project              | .+                                                          |
