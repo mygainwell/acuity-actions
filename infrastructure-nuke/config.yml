@@ -1,12 +1,12 @@
 s3:
   exclude:
     names_regex:
-      - .*
+      - *
 iam:
   exclude:
     names_regex:
-      - .*
+      - *
 secretsmanager:
   exclude:
     names_regex:
-      - .*
+      - *
