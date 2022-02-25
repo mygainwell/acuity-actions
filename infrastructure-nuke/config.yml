@@ -1,0 +1,14 @@
+--region us-east-1 --exclude-resource-type s3 --exclude-resource-type iam --exclude-resource-type secretsmanager
+
+s3:
+  exclude:
+    names_regex:
+      - .*
+iam:
+  exclude:
+    names_regex:
+      - .*
+secretsmanager:
+  exclude:
+    names_regex:
+      - .*
