@@ -9,7 +9,6 @@ runs:
       - name: "Run - Cloud Nuke"
         run: |
           cloud-nuke aws \
-            --dry-run \
             --region us-east-1 \
             --exclude-resource-type s3 \
             --exclude-resource-type iam \
