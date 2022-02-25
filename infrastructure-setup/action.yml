@@ -23,7 +23,10 @@ runs:
         role-duration-seconds: 1200
         role-session-name: acuity-actions-cicd
     - name: "Setup - Terraform CLI"
-      uses: hashicorp/setup-terraform@v1.3.2
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.1.5
+        terraform_wrapper: false
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
       with:
