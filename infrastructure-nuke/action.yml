@@ -7,5 +7,5 @@ runs:
         run: brew install cloud-nuke
         shell: sh
       - name: "Run - Cloud Nuke"
-        run: cloud-nuke aws --dry-run --config ./config.yml
+        run: cloud-nuke aws --dry-run --config ${{ github.action_path }}/config.yml
         shell: sh
