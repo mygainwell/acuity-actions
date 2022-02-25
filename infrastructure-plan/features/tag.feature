@@ -14,3 +14,15 @@ Feature: Tag Naming Standards AWS
         | Project              | .+                                                          |
         | Email                | .+                                                          |
         | ManagedBy            | ^(Terraform)$                                               |
+        
+    Scenario Outline: Ensure that specific tags are defined for EC2
+        Given I have aws_instance that supports tags defined
+        And aws_instance type is EC2 
+        When it has tags
+        Then it must contain tags
+        Then it must contain "<tags>"
+        And its value must match the "<value>" regex
+        Examples:
+        | tags               | value                          |
+        | qualysAgentInstall | ^(TRUE)$                       |
+        | nessusAgentInstall | ^(TRUE)$                       |
