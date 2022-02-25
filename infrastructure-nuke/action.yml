@@ -1,0 +1,11 @@
+name: "Infrastructure Nuke"
+
+runs:
+  using: "composite"
+  steps:      
+      - name: "Setup - Cloud Nuke"
+        run: brew install cloud-nuke
+        shell: sh
+      - name: "Run - Cloud Nuke"
+        run: cloud-nuke aws --dry-run --config ./config.yml
+        shell: sh
