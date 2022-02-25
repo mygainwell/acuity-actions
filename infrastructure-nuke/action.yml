@@ -7,5 +7,12 @@ runs:
         run: brew install cloud-nuke
         shell: sh
       - name: "Run - Cloud Nuke"
-        run: cloud-nuke aws --dry-run --config ${{ github.action_path }}/config.yml
+        run: |
+          cloud-nuke aws \
+            --dry-run \
+            --region us-east-1 \
+            --exclude-resource-type s3 \
+            --exclude-resource-type iam \
+            --exclude-resource-type secretsmanager
+        # --config ${{ github.action_path }}/config.yml
         shell: sh
