@@ -12,6 +12,7 @@ runs:
             --region us-east-1 \
             --exclude-resource-type s3 \
             --exclude-resource-type iam \
-            --exclude-resource-type secretsmanager
+            --exclude-resource-type secretsmanager \
+            --force
         # --config ${{ github.action_path }}/config.yml
         shell: sh
