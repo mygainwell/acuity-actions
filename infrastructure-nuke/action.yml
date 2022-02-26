@@ -10,6 +10,9 @@ runs:
         run: |
           cloud-nuke aws \
             --region us-east-1 \
+            --region us-east-2 \
+            --region us-west-1 \
+            --region us-west-2 \
             --exclude-resource-type s3 \
             --exclude-resource-type iam \
             --exclude-resource-type secretsmanager \
