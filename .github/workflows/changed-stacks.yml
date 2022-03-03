@@ -1,0 +1,24 @@
+name: Changed Stacks
+
+on:
+  push:
+    paths:
+      - 'test/changed-stacks.bats'
+      - 'changed-stacks/**'
+      - '.github/workflows/changed-stacks.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+    steps:
+      - name: "Setup - Checkout"
+        uses: actions/checkout@v1
+        with:
+          submodules: 'recursive'
+      - name: "Run - Tests"
+        run: ./test/bats/bin/bats test

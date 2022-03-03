@@ -101,3 +101,28 @@ function main {
 }
 
 main "${*}"
+
+function stack_files_array() {
+	array=("$@")
+	echo "${array[@]}" | grep stacks | sed 's|stacks/||g'
+}
+
+function input_files_array() {
+	array=("$@")
+	echo "${array[@]}" | grep inputs/${environment}/ | grep inputs.hcl | sed "s|inputs/${environment}/||g" | xargs -I {} dirname {}
+}
+
+function static_common_files_array() {
+	array=(${environment}.hcl config.hcl common.hcl)
+	echo "${array[@]}"
+}
+
+function common_files_array() {
+	array=("$@")
+	echo "${array[@]}" | grep 'inputs/mgmt*\|stacks*\|[^\].*[.hcl]' | sed "s/.*\///"
+}
+
+function updated_stacks_array() {
+	array=("$@")
+	echo $(stack_files_array "${array[@]}" input_files_array "${array[@]}")
+}
