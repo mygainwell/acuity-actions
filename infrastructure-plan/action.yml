@@ -34,4 +34,5 @@ runs:
       if: github.event.pull_request
       uses: aquasecurity/tfsec-pr-commenter-action@main
       with:
+        tfsec_args: --config-file tfsec.yml
         github_token: ${{ github.token }}
