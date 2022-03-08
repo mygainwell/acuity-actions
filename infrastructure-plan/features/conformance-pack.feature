@@ -1,5 +1,5 @@
-@1981
-Feature: Conformance Pack
+"""
+ Feature: Conformance Pack
   In order to comply with security
   As engineers
   We'll deploy AWS Conformance Pack
@@ -15,3 +15,4 @@ Feature: Conformance Pack
       | insecure | bad      | IAM_PASSWORD_POLICY | 
       
       https://docs.aws.amazon.com/config/latest/developerguide/iam-password-policy.html
+"""

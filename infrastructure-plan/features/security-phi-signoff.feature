@@ -1,4 +1,4 @@
-@2542
+"""
 Feature: Before PHI can be loaded Security must sign off on the environment
   In order to comply with security
   As engineers
@@ -38,13 +38,13 @@ Feature: Before PHI can be loaded Security must sign off on the environment
   Scenario: Ensure IAM password policy meets standards
     Given that aws_iam_account_password_policy exists
     Then minimum_password_length        = 16
-  require_lowercase_characters   = true
-  require_numbers                = true
-  require_uppercase_characters   = true
-  require_symbols                = true
-  allow_users_to_change_password = true
-  password_reuse_prevention      = 24
-  max_password_age               = 60
+      require_lowercase_characters   = true
+      require_numbers                = true
+      require_uppercase_characters   = true
+      require_symbols                = true
+      allow_users_to_change_password = true
+      password_reuse_prevention      = 24
+      max_password_age               = 60
   
   Scenario: Ensure a log metric filter and alarm exist for S3 bucket policy changes
     Given aws_s3_bucket exists
@@ -54,8 +54,9 @@ Feature: Before PHI can be loaded Security must sign off on the environment
   Scenario: Require S3 bucket-access logging is enabled for *NEW* buckets
     Given a new aws_s3_bucket is created
     Then aws_access_logs should be enabled
-    
-    
+
+
 ['LogFormat'] == "${account-id} ${action} ${az-id} ${bytes} ${dstaddr} ${dstport} ${end} ${flow-direction} ${instance-id} ${interface-id} ${log-status} ${packets} ${pkt-dst-aws-service} ${pkt-dstaddr} ${pkt-src-aws-service} ${pkt-srcaddr} ${protocol} ${region} ${srcaddr} ${srcport} ${start} ${sublocation-id} ${sublocation-type} ${subnet-id} ${tcp-flags} ${traffic-path} ${type} ${version} ${vpc-id}":
 from Veera Matukumalli to everyone:    11:59 AM
 log_format = "$${version} $${vpc-id} $${subnet-id} $${instance-id} $${interface-id} $${account-id} $${type} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${pkt-srcaddr} $${pkt-dstaddr} $${protocol} $${bytes} $${packets} $${start} $${end} $${action} $${tcp-flags} $${log-status}"
+"""
