@@ -1,3 +1,4 @@
+"""
 Feature: Directory Service Standards AWS
 
     Scenario Outline: Directory Service Properties
@@ -39,3 +40,4 @@ Feature: Directory Service Standards AWS
         | ProtocolName       | proto | portNumber |
         | LDAP               | tcp   | 389        |
         | Global Catalog     | tcp   | 3268       |
+"""

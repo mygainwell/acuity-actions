@@ -25,8 +25,10 @@ Feature: Security Group Standards AWS
         | RDP          | tcp   | 3389       |
         | Jenkins Slave| tcp   | 50000      |
 
+"""
     Scenario: No publicly open ports
         Given I have AWS Security Group defined
         When it has ingress
         Then it must have ingress
         Then it must not have tcp protocol and port 1024-65535 for 0.0.0.0/0
+"""
