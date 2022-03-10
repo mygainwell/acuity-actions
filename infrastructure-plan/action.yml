@@ -22,15 +22,17 @@ runs:
       run: terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
       shell: sh
       working-directory: ${{ inputs.infrastructure-path }}
-    - name: "Run - Terraform Compliance"
+    - name: "Run - Terraform Compliance on Action Path"
       run: |
-        echo $(PWD)/features
-        echo ${{ github.action_path }}/features
-        echo ${GITHUB_ACTION_PATH}/features
         terraform-compliance -p plan.out.json -f ${{ github.action_path }}/features
       shell: sh
       working-directory: ${{ inputs.infrastructure-path }}
-    - name: "Run - Terraform Security"
+    - name: "Run - Terraform Compliance on Infrastructure Path"
+      run: |
+        terraform-compliance -p plan.out.json
+      shell: sh
+      working-directory: ${{ inputs.infrastructure-path }}
+    - name: "Run - Terraform Security on Pull Request"
       if: github.event.pull_request
       uses: aquasecurity/tfsec-pr-commenter-action@main
       with:
