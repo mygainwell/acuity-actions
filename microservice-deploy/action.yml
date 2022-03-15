@@ -1,0 +1,27 @@
+name: "Global VPC Integration"
+description: "Microservice Deploy"
+
+inputs:
+  cluster-name:
+    description: "Name of ECS cluster"
+    required: true
+  service-name:
+    description: "Service Name"
+    required: true
+  new-image-uri:
+    description: "URI of new Docker image"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: "Run - Microservice Deploy"
+      run: |
+        python deploy.py \
+        --cluster_name ${{ inputs.cluster-name }} \
+        --service_name ${{ inputs.service-name }} \
+        --new_image_uri ${{ inputs.new-image-uri }}
