@@ -5,7 +5,7 @@ from botocore.stub import Stubber, ANY
 
 @pytest.fixture
 def ecs_client(*args):
-    ecs_client = botocore.session.get_session().create_client('ecs')
+    ecs_client = botocore.session.get_session().create_client('ecs', 'us-east-1')
     return ecs_client
 
 @pytest.fixture
