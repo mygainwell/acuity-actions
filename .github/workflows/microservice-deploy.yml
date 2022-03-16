@@ -1,0 +1,27 @@
+name: Microservice Deploy
+
+on:
+  push:
+    paths:
+      - 'microservice-deploy/**'
+      - '.github/workflows/microservice-deploy.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+    steps:
+      - name: "Setup - Checkout"
+        uses: actions/checkout@v1
+      - name: "Setup - python"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: "Run - Tests"
+        run: |
+          pip install pytest boto3
+          pytest microservice-deploy
