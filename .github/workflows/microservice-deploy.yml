@@ -22,4 +22,6 @@ jobs:
         with:
           python-version: 3.8
       - name: "Run - Tests"
-        run: pytest microservice-deploy
+        run: |
+          pip install pytest
+          pytest microservice-deploy
