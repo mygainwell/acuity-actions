@@ -28,7 +28,8 @@ Feature: Open ID Connect Github Provider
         Then it should have Statement
         Then it should have Action
         Then its value should contain <access>
-        Examples: 
+        
+        Examples:
         | repository        | access    |  
         | gainwell-360-ui   | ecs:*     |
         | gainwell-360-ui   | ecr:*     |
