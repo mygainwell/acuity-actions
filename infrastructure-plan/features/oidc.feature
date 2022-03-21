@@ -11,7 +11,7 @@ Feature: Open ID Connect Github Provider
         Examples:
         | team                      | repository_conditions                                     |
         | Data Engineering          | repo:mygainwell/acuity-data-engineering:ref:refs/heads/*  |
-        | BI Engineers              | repo:mygainwell/acuity-bi:ref:refs/heads/*                | # Team Analysts?
+        | BI Engineers              | repo:mygainwell/acuity-tableau:ref:refs/heads/*                | # Team Analysts?
         | Infrastructure            | repo:mygainwell/acuity-terraform-modules:ref:refs/heads/* |
         | Infrastructure            | repo:mygainwell/acuity-aws-stacks:ref:refs/heads/*        |
         | Infrastructure            | repo:mygainwell/acuity-platform-live:ref:refs/heads/*     |
