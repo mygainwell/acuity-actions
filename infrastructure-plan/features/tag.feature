@@ -12,5 +12,6 @@ Feature: Tag Naming Standards AWS
         | Company              | .+                                                          |
         | Environment          | ^(Ephemeral\|Production\|Management\|Development\|Staging)$ |
         | Project              | .+                                                          |
+        | Team                 | .+                                                          |    
         | Email                | .+                                                          |
         | ManagedBy            | ^(Terraform)$                                               |
