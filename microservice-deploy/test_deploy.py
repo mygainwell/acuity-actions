@@ -15,3 +15,16 @@ def test_stabilized(running_count_equals_desired_count):
         "Bar",
         1800 # timeout greater than or equal to sleep_seconds
     )
+
+def test_dockerVolumeConfiguration():
+    pass
+
+def test_efsVolumeConfiguration():
+    pass
+
+def test_ebs_get_snapshot_block():
+    pass
+
+#optional
+def test_fsxWindowsFileServerVolumeConfiguration():
+    pass
