@@ -25,3 +25,4 @@ runs:
         --cluster_name ${{ inputs.cluster-name }} \
         --service_name ${{ inputs.service-name }} \
         --new_image_uri ${{ inputs.new-image-uri }}
+      shell: bash
