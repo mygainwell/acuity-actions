@@ -74,6 +74,7 @@ if __name__ == "__main__":
     new_image_uri = args.new_image_uri
 
     ecs_client = boto3.client("ecs")
+    ebs_client = boto3.client("ebs")
 
     task_definition = current_task_definition(
         ecs_client, cluster=cluster_name, service=service_name

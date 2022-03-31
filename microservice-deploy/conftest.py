@@ -1,3 +1,4 @@
+from ast import Str
 import pytest
 
 import botocore.session
@@ -23,6 +24,30 @@ def running_count_equals_desired_count(ecs_client):
         expected_params = {"cluster": ANY, "services": ANY}
         stubbed_ecs_client.add_response('describe_services', response, expected_params)
         yield ecs_client
+
+
+@pytest.fixture
+def ebs_client(*args):
+    ebs_client = botocore.session.get_session().create_client('ebs', 'us-east-1')
+    return ebs_client
+
+@pytest.fixture
+def ebs_volume_mount(ebs_client):
+    with Stubber(ebs_client) as stubbed_ebs_client:
+        response = get_snapshot_block_response('string',123,'string')
+        expected_params = {"SnapshotId": ANY, "BlockIndex": ANY, "BlockToken": ANY}
+        stubbed_ebs_client.add_response('get_snapshot_block', response, expected_params)
+        yield ebs_client
+
+def get_snapshot_block_response(SnapshotId:str,BlockIndex:int, BlockToken:str):
+    return {
+       
+    }
+
+
+
+
+
 
 def describe_services_response(runningCount, desiredCount):
     return {

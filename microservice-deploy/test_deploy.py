@@ -5,7 +5,7 @@ def test_not_stabilized(desired_count_exceeds_running_count):
         desired_count_exceeds_running_count,
         "Foo",
         "Bar",
-        1
+        9
     )
 
 def test_stabilized(running_count_equals_desired_count):
@@ -22,7 +22,7 @@ def test_dockerVolumeConfiguration():
 def test_efsVolumeConfiguration():
     pass
 
-def test_ebs_get_snapshot_block():
+def test_ebs_get_snapshot_block(ebs_volume_mount):
     pass
 
 #optional
