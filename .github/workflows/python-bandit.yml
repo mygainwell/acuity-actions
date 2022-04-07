@@ -1,0 +1,25 @@
+name: Python Bandit Scan
+
+on:
+  push:
+    paths:
+      - 'python-bandit/**'
+      - '.github/workflows/python-bandit.yml'
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+    steps:
+      - name: "Setup - Checkout"
+        uses: actions/checkout@v1
+      - name: "Run - Bandit"
+        id: bandit 
+        uses: mygainwell/acuity-actions/python-bandit@bandit
+        with:
+          notebooks-path: python-bandit
+        continue-on-error: true
+      - name: "Assert Bandit Found Vulnerabilities"
+        if: steps.bandit.outcome != 'failure'
+        run: exit 1
