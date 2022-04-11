@@ -1,4 +1,4 @@
-from deploy import wait_to_finish_deployment
+from deploy import wait_to_finish_deployment, create_new_task_definition 
 
 def test_not_stabilized(desired_count_exceeds_running_count):
     assert not wait_to_finish_deployment(
@@ -19,7 +19,7 @@ def test_stabilized(running_count_equals_desired_count):
 def test_dockerVolumeConfiguration():
     pass
 
-def test_efsVolumeConfiguration():
+def test_efsVolumeConfiguration(ecs_client,current_definition):
     """
     GIVEN fileSystemId input of "bar"
     AND rootDirectory input of "baz"
@@ -29,7 +29,7 @@ def test_efsVolumeConfiguration():
     AND the efsVolumeConfiguration will have fileSystemId equal to "bar"
     AND the efsVolumeConfiguration will have rootDirectory equal to "baz" 
     """
-    assert False
+    assert create_new_task_definition(ecs_client,current_definition, "Any")
 
 def test_ebs_get_snapshot_block(ebs_volume_mount):
     pass
