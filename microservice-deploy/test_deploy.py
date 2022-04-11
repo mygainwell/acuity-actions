@@ -20,7 +20,16 @@ def test_dockerVolumeConfiguration():
     pass
 
 def test_efsVolumeConfiguration():
-    pass
+    """
+    GIVEN fileSystemId input of "bar"
+    AND rootDirectory input of "baz"
+    WHEN we create_new_task_definition
+    THEN the taskDefinition will have volumes
+    AND the volumes will have efsVolumeConfiguration
+    AND the efsVolumeConfiguration will have fileSystemId equal to "bar"
+    AND the efsVolumeConfiguration will have rootDirectory equal to "baz" 
+    """
+    assert False
 
 def test_ebs_get_snapshot_block(ebs_volume_mount):
     pass
