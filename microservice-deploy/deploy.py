@@ -18,12 +18,15 @@ def create_new_task_definition(client, current_definition, new_image):
     container_definition = current_definition["containerDefinitions"][0].copy()
     container_definition["image"] = new_image
 
+
     return client.register_task_definition(
-        family=task_definition["family"],
-        volumes=task_definition["volumes"],
+        family=current_definition["family"],
+        volumes=current_definition["volumes"],
         containerDefinitions=[container_definition],
     )["taskDefinition"]["taskDefinitionArn"]
 
+def handle_volumes_configuration():
+    pass
 
 def update_service(client, cluster, service, task_arn):
     client.update_service(

@@ -10,19 +10,12 @@ def ecs_client(*args):
     ecs_client = botocore.session.get_session().create_client('ecs', 'us-east-1')
     return ecs_client
 
-
-
-
 @pytest.fixture
 def current_definition():
     return {
-        "containerDefinitions": [
-            {
-                "task_definition":task_definition
-                    
-                
-            }
-        ]
+        "family" : "Any",
+        "volumes" : [ {},{} ],
+        "containerDefinitions":[{}]
     }
 
 @pytest.fixture
@@ -36,17 +29,24 @@ def describe_services():
     }
 
 @pytest.fixture
-def current_task_definition(ecs_client):
+def desired_task_definition(ecs_client):
     with Stubber(ecs_client) as stubbed_ecs_client:
+
+        response= {"taskDefinition":{"taskDefinitionArn":"baz"},}
+        expected_params= {
+            'family':ANY,
+            "volumes":ANY,
+            "containerDefinitions":ANY
+        }
+
         stubbed_ecs_client.add_response(
-            'describe_services',
-            describe_services(),
-            {"cluster": ANY, "services": ANY}
+            "register_task_definition",
+            response,
+            expected_params
         )
-        response = current_definition()
-        expected_params = {"taskDefinition": ANY}
-        stubbed_ecs_client.add_response('describe_task_definition', response, expected_params)
+    
         yield ecs_client
+
 
 
 @pytest.fixture

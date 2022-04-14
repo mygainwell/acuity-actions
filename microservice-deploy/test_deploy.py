@@ -1,7 +1,8 @@
-from deploy import wait_to_finish_deployment, create_new_task_definition 
+import deploy
+ 
 
 def test_not_stabilized(desired_count_exceeds_running_count):
-    assert not wait_to_finish_deployment(
+    assert not deploy.wait_to_finish_deployment(
         desired_count_exceeds_running_count,
         "Foo",
         "Bar",
@@ -9,7 +10,7 @@ def test_not_stabilized(desired_count_exceeds_running_count):
     )
 
 def test_stabilized(running_count_equals_desired_count):
-    assert wait_to_finish_deployment(
+    assert deploy.wait_to_finish_deployment(
         running_count_equals_desired_count,
         "Foo",
         "Bar",
@@ -19,17 +20,17 @@ def test_stabilized(running_count_equals_desired_count):
 def test_dockerVolumeConfiguration():
     pass
 
-def test_efsVolumeConfiguration(ecs_client,current_definition):
+def test_efsVolumeConfiguration(desired_task_definition,current_definition):
     """
     GIVEN fileSystemId input of "bar"
     AND rootDirectory input of "baz"
-    WHEN we create_new_task_definition
-    THEN the taskDefinition will have volumes
+    WHEN we handle_volumes_configuration
+    THEN the container_definition will have volumes
     AND the volumes will have efsVolumeConfiguration
     AND the efsVolumeConfiguration will have fileSystemId equal to "bar"
     AND the efsVolumeConfiguration will have rootDirectory equal to "baz" 
-    """
-    assert create_new_task_definition(ecs_client,current_definition, "Any")
+    """   
+    assert deploy.create_new_task_definition(desired_task_definition,current_definition, "Any")
 
 def test_ebs_get_snapshot_block(ebs_volume_mount):
     pass
