@@ -32,7 +32,7 @@ runs:
   using: composite
   steps:
     - name: install ssh keys
-      uses: shimataro/ssh-key-action@v2s
+      uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ inputs.ssh_private_key }}
         known_hosts: github.com
