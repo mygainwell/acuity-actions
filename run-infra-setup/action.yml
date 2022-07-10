@@ -1,0 +1,89 @@
+name: Install pre-required packages
+description: |
+  Action should help in installing pre required packages on 
+  github hosted runners to execute and deploy infrastructure
+
+inputs:
+  ssh_private_key:
+    description: SSH Private key to download gruntworks and private repos
+    required: true
+  terragrunt_version:
+    description: Terragrunt version to download and install
+    required: true
+    default: 0.38.4
+  tfsec_version:
+    description: TFSec Version to install
+    required: true
+    default: 1.26.3
+  tfcmt_version:
+    description: TFCmt Version to install
+    required: true
+    default: 3.2.5
+  gruntwork_installer_version:
+    description: Gruntwork Installer Version
+    required: true
+    default: 0.0.38
+  helpers_version:
+    description: Gruntworks Helper version
+    required: true
+    default: 0.50.3
+
+runs:
+  using: composite
+  steps:
+    - name: install ssh keys
+      uses: shimataro/ssh-key-action@v2s
+      with:
+        key: ${{ inputs.ssh_private_key }}
+        known_hosts: github.com
+    
+    - name: install terragrunt
+      uses: autero1/action-terragrunt@v1.1.0
+      with:
+        terragrunt_version: ${{ inputs.terragrunt_version }}
+      
+    - name: install golang
+      uses: actions/setup-go@v3
+      with:
+        go-version: ">=1.17.0"
+    
+    - name: install tfsec
+      run: |
+        curl -Lo /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v${{inputs.tfsec_version}}/tfsec-linux-amd64
+      shell: bash
+    
+    - name: install tfcmt
+      run: |
+        curl -Lo /tmp/tfcmt_linux_amd64.tar.gz https://github.com/suzuki-shunsuke/tfcmt/releases/download/v${{inputs.tfcmt_version}}/tfcmt_linux_amd64.tar.gz
+      shell: bash
+
+    - name: execute permissions to tfcmt
+      run: |
+        cd /tmp
+        tar -xvzf tfcmt_linux_amd64.tar.gz
+        mv tfcmt /usr/local/bin/tfcmt
+        chmod +x /usr/local/bin/tfcmt
+      shell: bash
+    
+    - name: gruntworks installer
+      run: |
+        curl -LsS https://raw.githubusercontent.com/gruntwork-io/gruntwork-installer/master/bootstrap-gruntwork-installer.sh | bash /dev/stdin --version v${{inputs.gruntwork_installer_version}}
+      shell: bash
+    - name: install terraform-helpers
+      run: |
+        gruntwork-install --repo "https://github.com/gruntwork-io/terraform-aws-ci" \
+          --module-name "terraform-helpers" \
+          --tag "v${{inputs.helpers_version}}"
+      shell: bash
+    - name: install build-helpers
+      run: |
+        gruntwork-install --repo "https://github.com/gruntwork-io/terraform-aws-ci" \
+          --module-name "build-helpers" \
+          --tag "v${{inputs.helpers_version}}"
+      shell: bash
+    - name: install aws-auth
+      run: |
+        gruntwork-install --repo "https://github.com/gruntwork-io/terraform-aws-security" \
+          --module-name "aws-auth" \
+          --tag "v0.65.6"
+      shell: bash
