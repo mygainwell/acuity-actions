@@ -1,0 +1,48 @@
+name: Run terragrunt
+description: |
+  Action to execute terragrunt on a specified working directory
+
+inputs:
+  token:
+    description: Github Token
+    required: true
+  destroy:
+    description: run 'destroy' on the stack
+    required: true
+    default: "false"
+  working_dir:
+    description: terragrunt config location
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: terragrunt - plan
+      id: plan
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        cd ${{ inputs.working_dir }}
+        tfcmt --config $GITHUB_WORKSPACE/tfcmt.yaml --var target:${{ inputs.working_dir }} plan --patch -- terragrunt run-all plan
+      shell: bash
+
+    - name: terragrunt - apply
+      id: apply
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        cd $GITHUB_WORKSPACE/${{ inputs.working_dir }}
+        terragrunt run-all apply
+      shell: bash
+
+    - name: terragrunt - output
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        cd $GITHUB_WORKSPACE/${{ inputs.working_dir }}
+        terragrunt output
+      shell: bash
+
+    - name: terragrunt - destroy
+      if: ${{ inputs.destroy == 'true' }}
+      run: |
+        cd $GITHUB_WORKSPACE/${{ inputs.working_dir }}
+        terragrunt destroy
+      shell: bash
